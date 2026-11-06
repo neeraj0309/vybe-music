@@ -1,0 +1,190 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0b0b12">
+<title>VYBE Music</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#0b0b12;color:white;font-family:Arial,sans-serif;padding-bottom:145px}
+header{padding:24px 18px;background:linear-gradient(160deg,#41217d,#0b0b12)}
+.logo{font-size:30px;font-weight:900;letter-spacing:2px}
+.logo span{color:#b68cff}
+small,.muted{color:#aaa}
+h2{font-size:20px;margin:26px 0 15px}
+main{padding:0 18px}
+.hero{background:linear-gradient(125deg,#763fe5,#27144b);padding:24px;border-radius:20px;margin-top:15px}
+.hero h1{font-size:26px;margin:10px 0}
+button{cursor:pointer;border:0;color:white}
+.primary{background:#a56bff;border-radius:25px;padding:12px 24px;font-weight:bold}
+.chips{display:flex;gap:9px;overflow:auto;padding:5px 0}
+.chips button{background:#292536;padding:10px 16px;border-radius:20px;white-space:nowrap}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.card{background:#191821;padding:12px;border-radius:16px;cursor:pointer}
+.art{height:135px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:55px;background:linear-gradient(135deg,#7540bd,#df5b9b)}
+.card:nth-child(2n) .art{background:linear-gradient(135deg,#136c80,#7c42bc)}
+.card h3{font-size:15px;margin:10px 0 4px}
+.card p{font-size:12px;color:#aaa;margin:0}
+input{width:100%;background:#24222e;color:white;border:1px solid #494252;padding:15px;border-radius:12px;font-size:16px}
+.track{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #292632}
+.track .cover{width:55px;height:55px;border-radius:10px;background:#54328c;display:grid;place-items:center;font-size:25px}
+.track .details{flex:1}
+.track b{display:block;margin-bottom:5px}
+.track small{font-size:12px}
+.heart{background:none;font-size:23px}
+.player{position:fixed;bottom:65px;left:10px;right:10px;background:#302444;border:1px solid #604b82;border-radius:16px;padding:12px;z-index:5}
+.playerTop{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.player button{background:none;font-size:24px}
+.player .info{flex:1;min-width:0}
+.player .info b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.player .info small{display:block}
+#progress{width:100%;accent-color:#bc92ff;margin-top:12px}
+nav{position:fixed;bottom:0;background:#17141e;width:100%;display:flex;justify-content:space-around;padding:12px 0 18px;z-index:6}
+nav button{background:none;color:#aaa;font-size:12px}
+nav button.active{color:#bd92ff}
+nav button span{display:block;font-size:22px;margin-bottom:4px}
+.hidden{display:none}
+.notice{font-size:12px;color:#aaa;line-height:1.5}
+</style>
+</head>
+<body>
+<header>
+<div class="logo">VYBE<span> MUSIC</span></div>
+<small>Your music. Your mood. Your world.</small>
+</header>
+<main>
+<section id="home">
+<div class="hero">
+<small>WELCOME TO YOUR SOUND</small>
+<h1>Feel every beat.</h1>
+<p>Discover music for every mood.</p>
+<button class="primary" onclick="playSong(0)">Start Listening ▶</button>
+</div>
+<h2>Explore your mood</h2>
+<div class="chips">
+<button onclick="filterMood('Chill')">🌙 Chill</button>
+<button onclick="filterMood('Energy')">⚡ Energy</button>
+<button onclick="filterMood('Dream')">✨ Dream</button>
+<button onclick="filterMood('All')">🎵 All Music</button>
+</div>
+<h2>Featured Tracks</h2>
+<div id="featured" class="grid"></div>
+</section>
+
+<section id="search" class="hidden">
+<h2>Search Music</h2>
+<input id="query" placeholder="Search songs or artists..." oninput="renderSearch()">
+<div id="results"></div>
+</section>
+
+<section id="library" class="hidden">
+<h2>Your Library</h2>
+<p class="muted">Your favourite tracks and playlists.</p>
+<button class="primary" onclick="createPlaylist()">+ Create Playlist</button>
+<h2>My Playlists</h2>
+<div id="playlists"></div>
+<h2>Liked Songs</h2>
+<div id="likes"></div>
+</section>
+
+<section id="discover" class="hidden">
+<h2>Discover</h2>
+<p class="muted">Explore our demo music collection.</p>
+<div id="allTracks"></div>
+</section>
+<p class="notice">Demo audio is provided by SoundHelix for testing. This is not a licensed commercial music catalog.</p>
+</main>
+
+<div class="player">
+<div class="playerTop">
+<div class="info"><b id="playingTitle">Choose a song</b><small id="playingArtist">VYBE Music</small></div>
+<button onclick="previous()">⏮</button>
+<button id="playBtn" onclick="togglePlay()">▶</button>
+<button onclick="next()">⏭</button>
+</div>
+<input type="range" id="progress" min="0" max="100" value="0" oninput="seek(this.value)">
+</div>
+
+<nav>
+<button class="active" onclick="showTab('home',this)"><span>⌂</span>Home</button>
+<button onclick="showTab('search',this)"><span>⌕</span>Search</button>
+<button onclick="showTab('discover',this)"><span>♫</span>Discover</button>
+<button onclick="showTab('library',this)"><span>♡</span>Library</button>
+</nav>
+
+<audio id="audio" preload="none"></audio>
+<script>
+const songs=[
+{title:"Dreamscape",artist:"Demo Instrumental 1",mood:"Dream",emoji:"🌌",url:"https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"},
+{title:"Midnight Drive",artist:"Demo Instrumental 2",mood:"Chill",emoji:"🌃",url:"https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3"},
+{title:"Electric Waves",artist:"Demo Instrumental 3",mood:"Energy",emoji:"⚡",url:"https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3"},
+{title:"Purple Sky",artist:"Demo Instrumental 4",mood:"Dream",emoji:"🌆",url:"https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3"}
+];
+let current=0,started=false;
+let favourites=JSON.parse(localStorage.getItem("vybeLikes")||"[]");
+let playlists=JSON.parse(localStorage.getItem("vybePlaylists")||"[]");
+const audio=document.getElementById("audio");
+
+function playSong(i){
+current=i;started=true;
+audio.src=songs[i].url;
+document.getElementById("playingTitle").textContent=songs[i].title;
+document.getElementById("playingArtist").textContent=songs[i].artist;
+audio.play().then(()=>updateButton()).catch(()=>{document.getElementById("playBtn").textContent="▶";alert("Unable to play this demo track. Check your connection.");});
+}
+function togglePlay(){
+if(!started){playSong(0);return}
+if(audio.paused){audio.play().then(updateButton).catch(()=>alert("Playback unavailable"))}
+else{audio.pause();updateButton()}
+}
+function updateButton(){document.getElementById("playBtn").textContent=audio.paused?"▶":"⏸"}
+function next(){playSong((current+1)%songs.length)}
+function previous(){playSong((current-1+songs.length)%songs.length)}
+function seek(v){if(Number.isFinite(audio.duration))audio.currentTime=audio.duration*v/100}
+audio.ontimeupdate=()=>{if(Number.isFinite(audio.duration))document.getElementById("progress").value=audio.currentTime/audio.duration*100};
+audio.onended=next;
+audio.onpause=updateButton;
+audio.onplay=updateButton;
+
+function trackRow(s,i){
+return `<div class="track"><div class="cover" onclick="playSong(${i})">${s.emoji}</div><div class="details" onclick="playSong(${i})"><b>${s.title}</b><small>${s.artist}</small></div><button class="heart" onclick="like(${i})">${favourites.includes(i)?"♥":"♡"}</button></div>`;
+}
+function render(){
+document.getElementById("featured").innerHTML=songs.map((s,i)=>`<div class="card" onclick="playSong(${i})"><div class="art">${s.emoji}</div><h3>${s.title}</h3><p>${s.artist}</p></div>`).join("");
+document.getElementById("allTracks").innerHTML=songs.map(trackRow).join("");
+document.getElementById("likes").innerHTML=favourites.length?favourites.map(i=>trackRow(songs[i],i)).join(""):"<p class='muted'>No liked songs yet.</p>";
+document.getElementById("playlists").innerHTML=playlists.length?playlists.map(p=>`<div class="track">🎵 &nbsp; ${escapeText(p)}</div>`).join(""):"<p class='muted'>No playlists yet.</p>";
+renderSearch();
+}
+function escapeText(t){return t.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function like(i){
+favourites=favourites.includes(i)?favourites.filter(x=>x!==i):[...favourites,i];
+localStorage.setItem("vybeLikes",JSON.stringify(favourites));render();
+}
+function renderSearch(){
+const q=document.getElementById("query").value.toLowerCase();
+document.getElementById("results").innerHTML=songs.map((s,i)=>({s,i})).filter(x=>(x.s.title+" "+x.s.artist).toLowerCase().includes(q)).map(x=>trackRow(x.s,x.i)).join("")||"<p>No songs found.</p>";
+}
+function filterMood(m){
+showTab("discover",document.querySelectorAll("nav button")[2]);
+document.getElementById("allTracks").innerHTML=songs.map((s,i)=>({s,i})).filter(x=>m==="All"||x.s.mood===m).map(x=>trackRow(x.s,x.i)).join("");
+}
+function showTab(id,btn){
+document.querySelectorAll("main section").forEach(x=>x.classList.add("hidden"));
+document.getElementById(id).classList.remove("hidden");
+document.querySelectorAll("nav button").forEach(x=>x.classList.remove("active"));
+btn.classList.add("active");
+}
+function createPlaylist(){
+const name=prompt("Name your playlist:");
+if(!name||!name.trim())return;
+playlists.push(name.trim().slice(0,60));
+localStorage.setItem("vybePlaylists",JSON.stringify(playlists));render();
+}
+render();
+</script>
+</body>
+</html>
+
