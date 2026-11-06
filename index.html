@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0b0912">
-<title>VYBE Music 4.0</title>
+<title>VYBE Music 5.0</title>
 <style>
 :root{
  --bg:#0b0912;--panel:#20182c;
@@ -20,7 +20,7 @@ body{
 button,input,select{font:inherit}
 button{border:0;color:inherit;cursor:pointer}
 header{
- padding:27px 20px;
+ padding:24px 20px;
  background:linear-gradient(145deg,#49237d,#0b0912)
 }
 .logo{font-size:29px;font-weight:900;letter-spacing:2px}
@@ -82,7 +82,7 @@ h2{font-size:21px;margin:27px 0 14px}
 .details small{margin-top:5px;font-size:12px}
 .iconbtn{background:transparent;font-size:21px;padding:5px}
 .selected{color:#e0b9ff!important}
-.searchbox,select{
+.searchbox,select,.authinput{
  width:100%;background:#251e31;color:white;
  border:1px solid #4b3b60;border-radius:13px;
  padding:13px;font-size:16px
@@ -203,6 +203,33 @@ nav span{display:block;font-size:23px;margin-bottom:4px}
  padding:15px;background:#362744;
  border-radius:12px;margin:8px 0
 }
+.accountbtn{
+ margin-top:16px;background:#ffffff20;
+ border:1px solid #ffffff40;
+ padding:10px 16px;border-radius:22px;font-size:13px
+}
+.authscreen{
+ position:fixed;inset:0;z-index:50;
+ background:linear-gradient(155deg,#49217c,#0b0912 60%);
+ overflow-y:auto;padding:35px 24px;
+ display:flex;align-items:center;justify-content:center
+}
+.authcard{width:100%;max-width:420px}
+.authcard h1{font-size:32px;margin:15px 0}
+.authcard p{color:#c6b9d2;line-height:1.6}
+.authinput{margin:8px 0}
+.authaction{width:100%;margin:15px 0}
+.authlink{
+ background:none;color:#d5b4ff;
+ text-decoration:underline;padding:9px
+}
+.autherror{color:#ffb6c4;font-size:13px;line-height:1.5}
+.authsuccess{color:#a5f0c3;font-size:13px;line-height:1.5}
+.accountpanel{
+ background:#21182e;border-radius:18px;
+ padding:20px;margin-top:20px
+}
+.accountpanel p{overflow-wrap:anywhere}
 @media(min-width:650px){
  .grid{grid-template-columns:repeat(4,minmax(0,1fr))}
 }
@@ -213,6 +240,10 @@ nav span{display:block;font-size:23px;margin-bottom:4px}
 <header>
 <div class="logo">VYBE<span> MUSIC</span></div>
 <small>Your music. Your mood. Your world.</small>
+<div>
+<button class="accountbtn" id="accountButton"
+onclick="openAccount()">👤 Account</button>
+</div>
 </header>
 
 <main>
@@ -220,7 +251,7 @@ nav span{display:block;font-size:23px;margin-bottom:4px}
 <div class="hero">
 <small>YOUR MUSIC UNIVERSE</small>
 <h1>Feel every beat.</h1>
-<p>Discover genres, artists and albums in one place.</p>
+<p>Discover music made for every mood.</p>
 <button class="primary" onclick="playSong(0)">▶ Start Listening</button>
 </div>
 
@@ -249,13 +280,12 @@ oninput="renderSearch()">
 
 <section id="discover" class="hidden">
 <h2>Music Catalogue</h2>
-<p class="muted">Browse genres, artists, albums and track rights.</p>
+<p class="muted">Browse genres, artists and albums.</p>
 
 <div class="filters">
 <select id="genreFilter" onchange="renderCatalogue()"></select>
 <select id="artistFilter" onchange="renderCatalogue()"></select>
 </div>
-
 <div class="filters">
 <select id="albumFilter" onchange="renderCatalogue()"></select>
 <select id="rightsFilter" onchange="renderCatalogue()">
@@ -270,14 +300,13 @@ oninput="renderSearch()">
 
 <h2>Browse Artists</h2>
 <div id="artists" class="grid"></div>
-
 <h2>Browse Albums</h2>
 <div id="albums" class="grid"></div>
 </section>
 
 <section id="library" class="hidden">
 <h2>Your Library</h2>
-<p class="muted">Your favourites and personal playlists.</p>
+<p class="muted" id="libraryStatus">Your personal music library.</p>
 <button class="primary" onclick="createPlaylist()">＋ Create Playlist</button>
 <h2>My Playlists</h2>
 <div id="playlists"></div>
@@ -286,15 +315,16 @@ oninput="renderSearch()">
 </section>
 
 <p class="notice">
-VYBE Music is a prototype. SoundHelix URLs are demo audio references,
-not proof of commercial streaming rights. Obtain the necessary
-permissions before commercial distribution or monetisation.
+VYBE Music is a prototype. SoundHelix demo audio is not
+verified for commercial on-demand streaming.
+Obtain music rights before commercial distribution.
 </p>
 </main>
 
 <div class="mini">
 <div class="minirow">
-<button class="miniart" id="miniArt" onclick="openNowPlaying()">♫</button>
+<button class="miniart" id="miniArt"
+onclick="openNowPlaying()">♫</button>
 <div class="miniinfo" onclick="openNowPlaying()">
 <b id="miniTitle">Choose a song</b>
 <small id="miniArtist">VYBE Music</small>
@@ -327,7 +357,6 @@ permissions before commercial distribution or monetisation.
 </div>
 
 <div class="bigart" id="bigArt">♫</div>
-
 <div class="songhead">
 <div>
 <h2 id="fullTitle">Choose a song</h2>
@@ -347,7 +376,8 @@ value="0" oninput="seek(this.value)">
 <div class="bigcontrols">
 <button id="shuffleBtn" onclick="toggleShuffle()">⇄</button>
 <button onclick="previous()">⏮</button>
-<button class="mainplay" id="fullPlay" onclick="togglePlay()">▶</button>
+<button class="mainplay" id="fullPlay"
+onclick="togglePlay()">▶</button>
 <button onclick="next()">⏭</button>
 <button id="repeatBtn" onclick="toggleRepeat()">↻</button>
 </div>
@@ -369,22 +399,48 @@ onclick="if(event.target===this)closeModal()">
 </div>
 </div>
 
+<div id="authScreen" class="authscreen hidden">
+<div class="authcard">
+<button class="authlink" onclick="closeAuth()">← Back to music</button>
+<div class="logo">VYBE<span> MUSIC</span></div>
+<h1 id="authHeading">Welcome back.</h1>
+<p id="authDescription">Sign in to access your music library.</p>
+
+<form id="authForm" onsubmit="submitAuth(event)">
+<input class="authinput" id="authEmail" type="email"
+placeholder="Email address" autocomplete="email" required>
+<input class="authinput" id="authPassword" type="password"
+placeholder="Password" minlength="6" autocomplete="current-password" required>
+<button class="primary authaction" id="authSubmit"
+type="submit">Sign In</button>
+</form>
+
+<p id="authMessage"></p>
+<div style="text-align:center">
+<button class="authlink" id="authSwitch"
+onclick="switchAuth()">Create an account</button>
+</div>
+</div>
+</div>
+
 <audio id="audio" preload="none"></audio>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
-/*
-VYBE 4.0 Catalogue
-Only add music after checking its streaming rights.
-Keep existing track indices unchanged to preserve playlists.
-*/
+const SUPABASE_URL='https://tatpzzyzeqquvnfgaxoc.supabase.co';
+const SUPABASE_KEY='sb_publishable_yKjsocVguLbup2MuMJAasA_zey6hS-O';
+
+let db=null;
+try{
+ if(window.supabase){
+  db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+ }
+}catch(e){console.error(e)}
 
 const songs=[
 {
- title:'Dreamscape',
- artist:'Demo Instrumental 1',
- album:'Dream Sessions',
- genre:'Ambient',
- mood:'Dream',
+ title:'Dreamscape',artist:'Demo Instrumental 1',
+ album:'Dream Sessions',genre:'Ambient',mood:'Dream',
  emoji:'🌌',
  url:'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
  rights:'Demo only',
@@ -393,11 +449,8 @@ const songs=[
  licenceUrl:'https://www.soundhelix.com/'
 },
 {
- title:'Midnight Drive',
- artist:'Demo Instrumental 2',
- album:'Night Journeys',
- genre:'Chill',
- mood:'Chill',
+ title:'Midnight Drive',artist:'Demo Instrumental 2',
+ album:'Night Journeys',genre:'Chill',mood:'Chill',
  emoji:'🌃',
  url:'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
  rights:'Demo only',
@@ -406,11 +459,8 @@ const songs=[
  licenceUrl:'https://www.soundhelix.com/'
 },
 {
- title:'Electric Waves',
- artist:'Demo Instrumental 3',
- album:'Electric Sessions',
- genre:'Electronic',
- mood:'Energy',
+ title:'Electric Waves',artist:'Demo Instrumental 3',
+ album:'Electric Sessions',genre:'Electronic',mood:'Energy',
  emoji:'⚡',
  url:'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3',
  rights:'Demo only',
@@ -419,11 +469,8 @@ const songs=[
  licenceUrl:'https://www.soundhelix.com/'
 },
 {
- title:'Purple Sky',
- artist:'Demo Instrumental 4',
- album:'Dream Sessions',
- genre:'Ambient',
- mood:'Dream',
+ title:'Purple Sky',artist:'Demo Instrumental 4',
+ album:'Dream Sessions',genre:'Ambient',mood:'Dream',
  emoji:'🌆',
  url:'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3',
  rights:'Demo only',
@@ -435,6 +482,7 @@ const songs=[
 
 const $=id=>document.getElementById(id);
 const audio=$('audio');
+const valid=i=>Number.isInteger(i)&&i>=0&&i<songs.length;
 
 function safeRead(key,fallback){
  try{
@@ -443,44 +491,98 @@ function safeRead(key,fallback){
  }catch{return fallback}
 }
 
-const valid=i=>Number.isInteger(i)&&i>=0&&i<songs.length;
-
-let storedLikes=safeRead('vybeLikes',[]);
-let favourites=Array.isArray(storedLikes)?
- storedLikes.filter(valid):[];
-
-let rawPlaylists=safeRead('vybePlaylists',[]);
-let playlists=Array.isArray(rawPlaylists)?
- rawPlaylists.map(p=>
-  typeof p==='string'?{name:p,tracks:[]}:p
- ).filter(p=>p&&typeof p.name==='string'&&Array.isArray(p.tracks))
+function normalLikes(v){
+ return Array.isArray(v)?[...new Set(v.filter(valid))]:[];
+}
+function normalRecent(v){
+ return Array.isArray(v)?[...new Set(v.filter(valid))].slice(0,8):[];
+}
+function normalPlaylists(v){
+ if(!Array.isArray(v))return [];
+ return v.map(p=>typeof p==='string'?
+  {name:p,tracks:[]}:p)
+ .filter(p=>p&&typeof p.name==='string'&&Array.isArray(p.tracks))
  .map(p=>({
-  name:p.name,
-  tracks:p.tracks.filter(valid)
- })) : [];
+  name:p.name.slice(0,60),
+  tracks:[...new Set(p.tracks.filter(valid))]
+ }));
+}
 
-let storedRecent=safeRead('vybeRecent',[]);
-let recent=Array.isArray(storedRecent)?
- storedRecent.filter(valid):[];
+let favourites=normalLikes(safeRead('vybeLikes',[]));
+let playlists=normalPlaylists(safeRead('vybePlaylists',[]));
+let recent=normalRecent(safeRead('vybeRecent',[]));
 
-let current=0;
-let started=false;
-let shuffle=false;
-let repeat=0;
+let current=0,started=false,shuffle=false,repeat=0;
+let user=null,cloudReady=false,authMode='signin';
+let cloudTimer=null,cloudRevision=0,cloudSaving=false;
+let guestSnapshot=null;
+let authBusy=false;
 
-function save(){
+function snapshot(){
+ return {
+  likes:[...favourites],
+  playlists:JSON.parse(JSON.stringify(playlists)),
+  recent:[...recent]
+ };
+}
+
+function applyLibrary(data){
+ favourites=normalLikes(data.likes);
+ playlists=normalPlaylists(data.playlists);
+ recent=normalRecent(data.recent);
+ render();
+}
+
+function localSave(){
  localStorage.setItem('vybeLikes',JSON.stringify(favourites));
  localStorage.setItem('vybePlaylists',JSON.stringify(playlists));
  localStorage.setItem('vybeRecent',JSON.stringify(recent));
 }
 
+function save(){
+ if(user){
+  if(!cloudReady)return;
+  cloudRevision++;
+  clearTimeout(cloudTimer);
+  cloudTimer=setTimeout(flushCloud,600);
+ }else{
+  localSave();
+ }
+}
+
+async function flushCloud(){
+ if(!db||!user||!cloudReady||cloudSaving)return;
+ cloudSaving=true;
+ const owner=user.id;
+ try{
+  while(user&&user.id===owner&&cloudReady){
+   const revision=cloudRevision;
+   const data=snapshot();
+   const {error}=await db.from('user_libraries').upsert({
+    user_id:owner,
+    likes:data.likes,
+    playlists:data.playlists,
+    recent:data.recent,
+    updated_at:new Date().toISOString()
+   },{onConflict:'user_id'});
+   if(error)throw error;
+   if(revision===cloudRevision){
+    $('libraryStatus').textContent='☁ Saved to your VYBE account';
+    break;
+   }
+  }
+ }catch(e){
+  console.error(e);
+  $('libraryStatus').textContent='⚠ Cloud save failed. Please retry.';
+ }finally{
+  cloudSaving=false;
+ }
+}
+
 function esc(t){
  return String(t).replace(/[&<>"']/g,c=>({
-  '&':'&amp;',
-  '<':'&lt;',
-  '>':'&gt;',
-  '"':'&quot;',
-  "'":'&#39;'
+  '&':'&amp;','<':'&lt;','>':'&gt;',
+  '"':'&quot;',"'":'&#39;'
  })[c]);
 }
 
@@ -492,41 +594,28 @@ function formatTime(s){
 
 function syncPlayer(){
  const s=songs[current];
-
  $('miniTitle').textContent=started?s.title:'Choose a song';
  $('miniArtist').textContent=started?s.artist:'VYBE Music';
  $('miniArt').textContent=started?s.emoji:'♫';
-
  $('bigArt').textContent=started?s.emoji:'♫';
  $('fullTitle').textContent=started?s.title:'Choose a song';
  $('fullArtist').textContent=started?s.artist:'VYBE Music';
-
  $('fullHeart').textContent=favourites.includes(current)?'♥':'♡';
- $('fullHeart').classList.toggle(
-  'selected',favourites.includes(current)
- );
-
+ $('fullHeart').classList.toggle('selected',favourites.includes(current));
  updateButton();
 }
 
 function playSong(i){
  if(!valid(i))return;
-
- current=i;
- started=true;
+ current=i;started=true;
  audio.src=songs[i].url;
-
  recent=[i,...recent.filter(x=>x!==i)].slice(0,8);
  save();
-
  $('progress').value=0;
  $('miniFill').style.width='0%';
  $('elapsed').textContent='0:00';
  $('duration').textContent='0:00';
-
- syncPlayer();
- render();
-
+ syncPlayer();render();
  audio.play().catch(()=>{
   updateButton();
   alert('Unable to play this track. Check your internet connection.');
@@ -535,12 +624,9 @@ function playSong(i){
 
 function togglePlay(){
  if(!started)return playSong(0);
-
  if(audio.paused){
   audio.play().catch(()=>alert('Playback unavailable'));
- }else{
-  audio.pause();
- }
+ }else audio.pause();
 }
 
 function updateButton(){
@@ -552,27 +638,20 @@ function updateButton(){
 function next(){
  if(shuffle&&songs.length>1){
   let n;
-  do{
-   n=Math.floor(Math.random()*songs.length);
-  }while(n===current);
+  do{n=Math.floor(Math.random()*songs.length)}
+  while(n===current);
   playSong(n);
- }else{
-  playSong((current+1)%songs.length);
- }
+ }else playSong((current+1)%songs.length);
 }
 
 function previous(){
- if(audio.currentTime>3){
-  audio.currentTime=0;
-  return;
- }
+ if(audio.currentTime>3){audio.currentTime=0;return}
  playSong((current-1+songs.length)%songs.length);
 }
 
 function seek(v){
- if(Number.isFinite(audio.duration)&&audio.duration>0){
+ if(Number.isFinite(audio.duration)&&audio.duration>0)
   audio.currentTime=audio.duration*Number(v)/100;
- }
 }
 
 function toggleShuffle(){
@@ -591,30 +670,24 @@ function toggleRepeat(){
 
 audio.ontimeupdate=()=>{
  $('elapsed').textContent=formatTime(audio.currentTime);
-
  if(Number.isFinite(audio.duration)&&audio.duration>0){
   const p=100*audio.currentTime/audio.duration;
   $('progress').value=p;
   $('miniFill').style.width=p+'%';
  }
 };
-
 audio.onloadedmetadata=()=>{
  $('duration').textContent=formatTime(audio.duration);
 };
-
 audio.onplay=updateButton;
 audio.onpause=updateButton;
-
 audio.onended=()=>{
  if(repeat===2){
   audio.currentTime=0;
   audio.play().catch(updateButton);
  }else if(repeat===1||shuffle||current<songs.length-1){
   next();
- }else{
-  updateButton();
- }
+ }else updateButton();
 };
 
 function openNowPlaying(){
@@ -623,41 +696,35 @@ function openNowPlaying(){
  $('nowPlaying').classList.remove('hidden');
  document.body.style.overflow='hidden';
 }
-
 function closeNowPlaying(){
  $('nowPlaying').classList.add('hidden');
  document.body.style.overflow='';
 }
 
 function trackRow(s,i,add=true){
- return `
- <div class="track">
-  <button class="cover" onclick="playSong(${i})">${s.emoji}</button>
-  <div class="details" onclick="playSong(${i})">
-   <b>${esc(s.title)}</b>
-   <small>${esc(s.artist)} · ${esc(s.genre)}</small>
-  </div>
-  <button class="iconbtn ${favourites.includes(i)?'selected':''}"
-   onclick="like(${i})">
-   ${favourites.includes(i)?'♥':'♡'}
-  </button>
-  ${add?`<button class="iconbtn"
-   onclick="choosePlaylist(${i})">＋</button>`:''}
-  <button class="iconbtn" onclick="showLicence(${i})">ⓘ</button>
+ return `<div class="track">
+ <button class="cover" onclick="playSong(${i})">${s.emoji}</button>
+ <div class="details" onclick="playSong(${i})">
+ <b>${esc(s.title)}</b>
+ <small>${esc(s.artist)} · ${esc(s.genre)}</small></div>
+ <button class="iconbtn ${favourites.includes(i)?'selected':''}"
+ onclick="like(${i})">${favourites.includes(i)?'♥':'♡'}</button>
+ ${add?`<button class="iconbtn"
+ onclick="choosePlaylist(${i})">＋</button>`:''}
+ <button class="iconbtn" onclick="showLicence(${i})">ⓘ</button>
  </div>`;
 }
 
 function render(){
  $('featured').innerHTML=songs.map((s,i)=>`
  <button class="card" onclick="playSong(${i})">
-  <div class="art">${s.emoji}</div>
-  <h3>${esc(s.title)}</h3>
-  <p>${esc(s.artist)}</p>
- </button>`).join('');
+ <div class="art">${s.emoji}</div>
+ <h3>${esc(s.title)}</h3>
+ <p>${esc(s.artist)}</p></button>`).join('');
 
  $('recent').innerHTML=recent.length?
  recent.map(i=>trackRow(songs[i],i)).join(''):
- '<p class="empty">Your recently played songs appear here.</p>';
+ '<p class="empty">Play a song to see it here.</p>';
 
  $('likes').innerHTML=favourites.length?
  favourites.map(i=>trackRow(songs[i],i)).join(''):
@@ -665,15 +732,11 @@ function render(){
 
  $('playlists').innerHTML=playlists.length?
  playlists.map((p,i)=>`
- <div class="playlist">
-  <div class="playlisthead">
-   <div>
-    <h3>🎵 ${esc(p.name)}</h3>
-    <small>${p.tracks.length} songs</small>
-   </div>
-   <button class="pill" onclick="openPlaylist(${i})">Open</button>
-  </div>
- </div>`).join(''):
+ <div class="playlist"><div class="playlisthead">
+ <div><h3>🎵 ${esc(p.name)}</h3>
+ <small>${p.tracks.length} songs</small></div>
+ <button class="pill" onclick="openPlaylist(${i})">Open</button>
+ </div></div>`).join(''):
  '<p class="empty">No playlists yet.</p>';
 
  renderSearch();
@@ -683,23 +746,17 @@ function render(){
 
 function like(i){
  if(!valid(i))return;
-
  favourites=favourites.includes(i)?
- favourites.filter(x=>x!==i):
- [...favourites,i];
-
- save();
- render();
+ favourites.filter(x=>x!==i):[...favourites,i];
+ save();render();
 }
 
 function renderSearch(){
  const q=$('query').value.toLowerCase().trim();
-
  const matches=songs.map((s,i)=>({s,i}))
  .filter(x=>[
   x.s.title,x.s.artist,x.s.album,x.s.genre,x.s.mood
  ].join(' ').toLowerCase().includes(q));
-
  $('results').innerHTML=matches.length?
  matches.map(x=>trackRow(x.s,x.i)).join(''):
  '<p class="empty">No songs found.</p>';
@@ -707,34 +764,24 @@ function renderSearch(){
 
 function showTab(id,btn){
  document.querySelectorAll('main section').forEach(
-  x=>x.classList.add('hidden')
- );
-
+  x=>x.classList.add('hidden'));
  $(id).classList.remove('hidden');
-
  document.querySelectorAll('nav button').forEach(
-  x=>x.classList.remove('active')
- );
-
+  x=>x.classList.remove('active'));
  if(btn)btn.classList.add('active');
  window.scrollTo(0,0);
 }
 
 function filterMood(m){
  showTab('discover',document.querySelectorAll('nav button')[2]);
-
  ['genreFilter','artistFilter','albumFilter','rightsFilter']
  .forEach(id=>$(id).value='All');
-
  renderCatalogue();
-
  const matches=songs.map((s,i)=>({s,i}))
  .filter(x=>m==='All'||x.s.mood===m);
-
  $('allTracks').innerHTML=matches.map(
-  x=>trackRow(x.s,x.i)
- ).join('')||'<p class="empty">No tracks for this mood.</p>';
-
+  x=>trackRow(x.s,x.i)).join('')||
+ '<p class="empty">No tracks for this mood.</p>';
  $('catalogueCount').textContent=
  m==='All'?'All demo tracks':m+' mood tracks';
 }
@@ -743,8 +790,7 @@ function fillFilter(id,values,label){
  $(id).innerHTML=
  `<option value="All">All ${esc(label)}</option>`+
  [...new Set(values)].sort().map(v=>
-  `<option value="${esc(v)}">${esc(v)}</option>`
- ).join('');
+ `<option value="${esc(v)}">${esc(v)}</option>`).join('');
 }
 
 function initFilters(){
@@ -758,42 +804,35 @@ function renderCatalogue(){
  const a=$('artistFilter').value;
  const al=$('albumFilter').value;
  const r=$('rightsFilter').value;
-
  const matches=songs.map((s,i)=>({s,i}))
  .filter(x=>
-  (g==='All'||x.s.genre===g)&&
-  (a==='All'||x.s.artist===a)&&
-  (al==='All'||x.s.album===al)&&
-  (r==='All'||x.s.rights===r)
- );
+ (g==='All'||x.s.genre===g)&&
+ (a==='All'||x.s.artist===a)&&
+ (al==='All'||x.s.album===al)&&
+ (r==='All'||x.s.rights===r));
 
  $('catalogueCount').textContent=matches.length+' tracks found';
-
  $('allTracks').innerHTML=matches.length?
  matches.map(x=>trackRow(x.s,x.i)).join(''):
  '<p class="empty">No matching tracks.</p>';
 
  const artists=[...new Set(songs.map(s=>s.artist))];
-
  $('artists').innerHTML=artists.map(a=>{
   const i=songs.findIndex(s=>s.artist===a);
-  return `
-  <button class="card" onclick="browseArtist(${i})">
-   <div class="art">🎤</div>
-   <h3>${esc(a)}</h3>
-   <p>${songs.filter(s=>s.artist===a).length} tracks</p>
+  return `<button class="card" onclick="browseArtist(${i})">
+  <div class="art">🎤</div>
+  <h3>${esc(a)}</h3>
+  <p>${songs.filter(s=>s.artist===a).length} tracks</p>
   </button>`;
  }).join('');
 
  const albums=[...new Set(songs.map(s=>s.album))];
-
  $('albums').innerHTML=albums.map(a=>{
   const i=songs.findIndex(s=>s.album===a);
-  return `
-  <button class="card" onclick="browseAlbum(${i})">
-   <div class="art">💿</div>
-   <h3>${esc(a)}</h3>
-   <p>${songs.filter(s=>s.album===a).length} tracks</p>
+  return `<button class="card" onclick="browseAlbum(${i})">
+  <div class="art">💿</div>
+  <h3>${esc(a)}</h3>
+  <p>${songs.filter(s=>s.album===a).length} tracks</p>
   </button>`;
  }).join('');
 }
@@ -801,160 +840,326 @@ function renderCatalogue(){
 function browseArtist(i){
  ['genreFilter','albumFilter','rightsFilter']
  .forEach(id=>$(id).value='All');
-
  $('artistFilter').value=songs[i].artist;
- renderCatalogue();
- window.scrollTo(0,0);
+ renderCatalogue();window.scrollTo(0,0);
 }
-
 function browseAlbum(i){
  ['genreFilter','artistFilter','rightsFilter']
  .forEach(id=>$(id).value='All');
-
  $('albumFilter').value=songs[i].album;
- renderCatalogue();
- window.scrollTo(0,0);
+ renderCatalogue();window.scrollTo(0,0);
+}
+
+function canEdit(){
+ if(user&&!cloudReady){
+  alert('Please wait for your cloud library to load.');
+  return false;
+ }
+ return true;
 }
 
 function createPlaylist(){
+ if(!canEdit())return;
  const name=prompt('Enter playlist name:');
  if(!name||!name.trim())return;
-
- playlists.push({
-  name:name.trim().slice(0,60),
-  tracks:[]
- });
-
- save();
- render();
+ playlists.push({name:name.trim().slice(0,60),tracks:[]});
+ save();render();
 }
 
 function openModal(html){
  $('modalContent').innerHTML=html;
  $('modal').classList.remove('hidden');
 }
-
 function closeModal(){
  $('modal').classList.add('hidden');
 }
 
 function choosePlaylist(i){
- if(!valid(i))return;
-
+ if(!valid(i)||!canEdit())return;
  if(!playlists.length){
   if(confirm('Create a playlist first?')){
    createPlaylist();
    if(!playlists.length)return;
   }else return;
  }
-
- openModal(
-  '<h2>Add to Playlist</h2>'+
-  playlists.map((p,j)=>`
-   <button class="sheetitem" onclick="addToPlaylist(${j},${i})">
-    🎵 ${esc(p.name)}
-   </button>
-  `).join('')
- );
+ openModal('<h2>Add to Playlist</h2>'+
+ playlists.map((p,j)=>`
+ <button class="sheetitem" onclick="addToPlaylist(${j},${i})">
+ 🎵 ${esc(p.name)}</button>`).join(''));
 }
 
 function addToPlaylist(p,i){
- if(!playlists[p]||!valid(i))return;
-
- if(!playlists[p].tracks.includes(i)){
+ if(!playlists[p]||!valid(i)||!canEdit())return;
+ if(!playlists[p].tracks.includes(i))
   playlists[p].tracks.push(i);
- }
-
- save();
- render();
- closeModal();
+ save();render();closeModal();
 }
 
 function removeFromPlaylist(p,i){
- if(!playlists[p])return;
-
+ if(!playlists[p]||!canEdit())return;
  playlists[p].tracks=playlists[p].tracks.filter(x=>x!==i);
-
- save();
- render();
- openPlaylist(p);
+ save();render();openPlaylist(p);
 }
 
 function deletePlaylist(p){
- if(!confirm('Delete this playlist?'))return;
-
+ if(!canEdit()||!confirm('Delete this playlist?'))return;
  playlists.splice(p,1);
- save();
- render();
- closeModal();
+ save();render();closeModal();
 }
 
 function openPlaylist(p){
  const list=playlists[p];
  if(!list)return;
-
  const tracks=list.tracks.filter(valid);
-
- openModal(`
- <h2>${esc(list.name)}</h2>
- <p class="muted">${tracks.length} songs</p>
- ${
- tracks.length?
- tracks.map(i=>`
-  <div class="track">
-   <button class="cover" onclick="playSong(${i})">
-    ${songs[i].emoji}
-   </button>
-   <div class="details" onclick="playSong(${i})">
-    <b>${esc(songs[i].title)}</b>
-    <small>${esc(songs[i].artist)}</small>
-   </div>
-   <button class="pill" onclick="removeFromPlaylist(${p},${i})">
-    Remove
-   </button>
-  </div>
- `).join(''):
- '<p class="empty">Add songs from Discover or Search using ＋.</p>'
- }
- <p>
-  <button class="pill" onclick="deletePlaylist(${p})">
-   Delete Playlist
-  </button>
- </p>`);
+ openModal(`<h2>${esc(list.name)}</h2>
+ <p class="muted">${tracks.length} songs</p>`+
+ (tracks.length?tracks.map(i=>`
+ <div class="track">
+ <button class="cover" onclick="playSong(${i})">${songs[i].emoji}</button>
+ <div class="details" onclick="playSong(${i})">
+ <b>${esc(songs[i].title)}</b>
+ <small>${esc(songs[i].artist)}</small></div>
+ <button class="pill" onclick="removeFromPlaylist(${p},${i})">
+ Remove</button></div>`).join(''):
+ '<p class="empty">Add songs using ＋ in Discover.</p>')+
+ `<p><button class="pill" onclick="deletePlaylist(${p})">
+ Delete Playlist</button></p>`);
 }
 
 function showLicence(i){
  if(!valid(i))return;
-
  const s=songs[i];
-
- openModal(`
- <h2>Track &amp; Licence</h2>
- <p>
-  <b>${esc(s.title)}</b><br>
-  <span class="muted">${esc(s.artist)}</span>
- </p>
+ openModal(`<h2>Track &amp; Licence</h2>
+ <p><b>${esc(s.title)}</b><br>
+ <span class="muted">${esc(s.artist)}</span></p>
  <p style="line-height:1.8;font-size:13px">
-  <b>Album:</b> ${esc(s.album)}<br>
-  <b>Genre:</b> ${esc(s.genre)}<br>
-  <b>Status:</b> ${esc(s.rights)}<br>
-  <b>Licence:</b> ${esc(s.licence)}<br>
-  <b>Credit:</b> ${esc(s.credit)}
- </p>
- <p class="muted">
-  This information does not establish commercial streaming rights.
-  Verify recording and composition permissions before commercial use.
- </p>
- <p>
-  <a href="${esc(s.licenceUrl)}" target="_blank"
-  rel="noopener noreferrer" style="color:#d6b0ff">
-   View source information ↗
-  </a>
- </p>`);
+ <b>Album:</b> ${esc(s.album)}<br>
+ <b>Genre:</b> ${esc(s.genre)}<br>
+ <b>Status:</b> ${esc(s.rights)}<br>
+ <b>Licence:</b> ${esc(s.licence)}<br>
+ <b>Credit:</b> ${esc(s.credit)}</p>
+ <p class="muted">Commercial streaming rights are not verified.</p>
+ <a href="${esc(s.licenceUrl)}" target="_blank"
+ rel="noopener noreferrer" style="color:#d6b0ff">
+ View source information ↗</a>`);
+}
+
+/* VYBE ACCOUNT SYSTEM */
+
+function openAuth(mode='signin'){
+ authMode=mode;
+ $('authScreen').classList.remove('hidden');
+ updateAuthScreen();
+}
+
+function closeAuth(){
+ $('authScreen').classList.add('hidden');
+ $('authMessage').textContent='';
+}
+
+function updateAuthScreen(){
+ const signup=authMode==='signup';
+ $('authHeading').textContent=signup?
+ 'Join the VYBE.':'Welcome back.';
+ $('authDescription').textContent=signup?
+ 'Create your personal music account.':
+ 'Sign in to access your music library.';
+ $('authSubmit').textContent=signup?'Create Account':'Sign In';
+ $('authSwitch').textContent=signup?
+ 'Already have an account? Sign In':
+ 'New to VYBE? Create Account';
+ $('authPassword').autocomplete=signup?
+ 'new-password':'current-password';
+ $('authMessage').textContent='';
+}
+
+function switchAuth(){
+ authMode=authMode==='signin'?'signup':'signin';
+ updateAuthScreen();
+}
+
+async function submitAuth(e){
+ e.preventDefault();
+ if(authBusy)return;
+ if(!db){
+  $('authMessage').textContent='Connection unavailable. Reload the app.';
+  return;
+ }
+ const email=$('authEmail').value.trim();
+ const password=$('authPassword').value;
+ const signup=authMode==='signup';
+ authBusy=true;
+ $('authSubmit').disabled=true;
+ $('authMessage').textContent='Please wait...';
+ try{
+  let result;
+  if(signup){
+   result=await db.auth.signUp({
+    email,password,
+    options:{emailRedirectTo:location.origin+location.pathname}
+   });
+  }else{
+   result=await db.auth.signInWithPassword({email,password});
+  }
+  if(result.error)throw result.error;
+  if(signup&&!result.data.session){
+   $('authMessage').className='authsuccess';
+   $('authMessage').textContent=
+   'Check your email for the confirmation link, then return to VYBE and sign in.';
+  }else{
+   $('authMessage').className='authsuccess';
+   $('authMessage').textContent='Signed in successfully.';
+   if(result.data.user)await activateUser(result.data.user);
+   closeAuth();
+  }
+ }catch(err){
+  $('authMessage').className='autherror';
+  $('authMessage').textContent=err.message||'Authentication failed.';
+ }finally{
+  authBusy=false;
+  $('authSubmit').disabled=false;
+ }
+}
+
+async function activateUser(newUser){
+ if(!db||!newUser)return;
+ if(user&&user.id===newUser.id&&cloudReady)return;
+ if(user&&user.id!==newUser.id)await deactivateUser();
+
+ guestSnapshot=snapshot();
+ user=newUser;
+ cloudReady=false;
+ $('accountButton').textContent='👤 My Account';
+ $('libraryStatus').textContent='Loading your cloud library...';
+
+ try{
+  const {data,error}=await db.from('user_libraries')
+   .select('likes,playlists,recent')
+   .eq('user_id',newUser.id)
+   .maybeSingle();
+
+  if(error)throw error;
+  if(!user||user.id!==newUser.id)return;
+
+  if(data){
+   applyLibrary(data);
+   cloudReady=true;
+   $('libraryStatus').textContent='☁ Your cloud library';
+  }else{
+   const local=guestSnapshot;
+   const hasLocal=local.likes.length||
+    local.playlists.length||local.recent.length;
+
+   let chosen={likes:[],playlists:[],recent:[]};
+   if(hasLocal&&confirm(
+    'Import your existing playlists, likes and recent songs into this account?'
+   )){
+    chosen=local;
+   }
+
+   const {error:writeError}=await db.from('user_libraries')
+    .insert({
+     user_id:newUser.id,
+     likes:chosen.likes,
+     playlists:chosen.playlists,
+     recent:chosen.recent
+    });
+
+   if(writeError)throw writeError;
+   applyLibrary(chosen);
+   cloudReady=true;
+   $('libraryStatus').textContent='☁ Your cloud library';
+  }
+ }catch(err){
+  console.error(err);
+  $('libraryStatus').textContent='⚠ Cloud loading failed';
+  alert('Could not load your cloud library: '+err.message);
+ }
+}
+
+async function deactivateUser(){
+ clearTimeout(cloudTimer);
+ if(cloudSaving){
+  await new Promise(resolve=>{
+   const check=()=>{
+    if(!cloudSaving)resolve();
+    else setTimeout(check,100);
+   };
+   check();
+  });
+ }
+ user=null;
+ cloudReady=false;
+ cloudRevision=0;
+ if(guestSnapshot){
+  applyLibrary(guestSnapshot);
+  guestSnapshot=null;
+ }
+ $('accountButton').textContent='👤 Account';
+ $('libraryStatus').textContent='Your library is saved on this device.';
+}
+
+function openAccount(){
+ if(!user){
+  openAuth('signin');
+  return;
+ }
+ openModal(`<h2>👤 My VYBE Account</h2>
+ <div class="accountpanel">
+ <p><b>Signed in as</b><br>${esc(user.email||'VYBE User')}</p>
+ <p class="muted">Your music library is linked to your account.</p>
+ <button class="primary" onclick="retryCloudSave()">
+ ☁ Sync Library</button>
+ <p><button class="pill" onclick="signOut()">Log Out</button></p>
+ </div>`);
+}
+
+async function retryCloudSave(){
+ if(!cloudReady)return alert('Cloud library is not ready.');
+ cloudRevision++;
+ await flushCloud();
+ alert($('libraryStatus').textContent);
+}
+
+async function signOut(){
+ if(!db)return;
+ if(!confirm('Log out of your VYBE account?'))return;
+ if(cloudReady){
+  cloudRevision++;
+  await flushCloud();
+  if($('libraryStatus').textContent.includes('failed')){
+   alert('Cloud sync failed. Please retry before logging out.');
+   return;
+  }
+ }
+ const {error}=await db.auth.signOut();
+ if(error)return alert(error.message);
+ await deactivateUser();
+ closeModal();
+}
+
+async function initAuth(){
+ if(!db){
+  $('libraryStatus').textContent=
+   'Offline library mode. Supabase connection unavailable.';
+  return;
+ }
+ const {data,error}=await db.auth.getUser();
+ if(!error&&data.user)await activateUser(data.user);
+
+ db.auth.onAuthStateChange((event,session)=>{
+  if(event==='SIGNED_OUT'){
+   setTimeout(()=>deactivateUser(),0);
+  }
+  if(event==='SIGNED_IN'&&session?.user){
+   setTimeout(()=>activateUser(session.user),0);
+  }
+ });
 }
 
 initFilters();
 render();
+initAuth();
 </script>
 </body>
 </html>
