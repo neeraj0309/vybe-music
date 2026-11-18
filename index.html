@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0b0912">
-<title>VYBE Music 5.1</title>
+<title>VYBE Music 5.2</title>
 <style>
 :root{
  --bg:#0b0912;--panel:#20182c;
@@ -147,9 +147,7 @@ nav span{display:block;font-size:23px;margin-bottom:4px}
  padding:calc(20px + env(safe-area-inset-top)) 25px
  calc(25px + env(safe-area-inset-bottom))
 }
-.nowtop{
- display:flex;justify-content:space-between;align-items:center
-}
+.nowtop{display:flex;justify-content:space-between;align-items:center}
 .nowtop button{background:none;font-size:27px}
 .bigart{
  width:min(75vw,330px);aspect-ratio:1;
@@ -162,10 +160,7 @@ nav span{display:block;font-size:23px;margin-bottom:4px}
 .songhead h2{margin:0 0 7px}
 .songhead p{margin:0;color:#c9bad5}
 .songhead button{background:none;font-size:30px}
-#progress{
- width:100%;accent-color:#d6adff;
- margin:28px 0 5px
-}
+#progress{width:100%;accent-color:#d6adff;margin:28px 0 5px}
 .times{
  display:flex;justify-content:space-between;
  font-size:12px;color:#c8b8d6
@@ -179,9 +174,7 @@ nav span{display:block;font-size:23px;margin-bottom:4px}
  width:68px;height:68px;border-radius:50%;
  background:white;color:#2b1743;font-size:30px
 }
-.playerbottom{
- display:flex;justify-content:space-between;gap:10px
-}
+.playerbottom{display:flex;justify-content:space-between;gap:10px}
 .playerbottom button{
  background:#ffffff16;border-radius:22px;
  padding:11px 14px;font-size:13px
@@ -224,11 +217,9 @@ nav span{display:block;font-size:23px;margin-bottom:4px}
 }
 .autherror{color:#ffb6c4;font-size:13px;line-height:1.5}
 .authsuccess{color:#a5f0c3;font-size:13px;line-height:1.5}
-.accountpanel{
- background:#21182e;border-radius:18px;
- padding:20px;margin-top:20px
-}
+.accountpanel{background:#21182e;border-radius:18px;padding:20px;margin-top:20px}
 .accountpanel p{overflow-wrap:anywhere}
+.sheet a{color:#d6b0ff}
 @media(min-width:650px){
  .grid{grid-template-columns:repeat(4,minmax(0,1fr))}
 }
@@ -237,954 +228,906 @@ nav span{display:block;font-size:23px;margin-bottom:4px}
 <body>
 
 <header>
-<div class="logo">VYBE<span> MUSIC</span></div>
-<small>Your music. Your mood. Your world.</small>
-<div>
-<button class="accountbtn" id="accountButton"
-onclick="openAccount()">👤 Account</button>
-</div>
+ <div class="logo">VYBE<span> MUSIC</span></div>
+ <small>Your music. Your mood. Your world.</small>
+ <div><button class="accountbtn" id="accountButton" onclick="openAccount()">👤 Account</button></div>
 </header>
 
 <main>
-<section id="home">
-<div class="hero">
-<small>YOUR MUSIC UNIVERSE</small>
-<h1>Feel every beat.</h1>
-<p>Discover music made for every mood.</p>
-<button class="primary" onclick="playSong(0)">▶ Start Listening</button>
-</div>
+ <section id="home">
+  <div class="hero">
+   <small>YOUR MUSIC UNIVERSE</small>
+   <h1>Feel every beat.</h1>
+   <p>Discover music made for every mood.</p>
+   <button class="primary" onclick="playSong(0)">▶ Start Listening</button>
+  </div>
+  <h2>Explore your mood</h2>
+  <div class="chips">
+   <button onclick="filterMood('Chill')">🌙 Chill</button>
+   <button onclick="filterMood('Energy')">⚡ Energy</button>
+   <button onclick="filterMood('Dream')">✨ Dream</button>
+   <button onclick="filterMood('All')">🎵 All Music</button>
+  </div>
+  <h2>Featured Tracks</h2>
+  <div id="featured" class="grid"></div>
+  <h2>Recently Played</h2>
+  <div id="recent"></div>
+ </section>
 
-<h2>Explore your mood</h2>
-<div class="chips">
-<button onclick="filterMood('Chill')">🌙 Chill</button>
-<button onclick="filterMood('Energy')">⚡ Energy</button>
-<button onclick="filterMood('Dream')">✨ Dream</button>
-<button onclick="filterMood('All')">🎵 All Music</button>
-</div>
+ <section id="search" class="hidden">
+  <h2>Search Music</h2>
+  <input class="searchbox" id="query" type="search"
+   placeholder="Songs, artists, albums or genres..." oninput="renderSearch()">
+  <h2>Results</h2>
+  <div id="results"></div>
+ </section>
 
-<h2>Featured Tracks</h2>
-<div id="featured" class="grid"></div>
-<h2>Recently Played</h2>
-<div id="recent"></div>
-</section>
+ <section id="discover" class="hidden">
+  <h2>Music Catalogue</h2>
+  <p class="muted">Browse genres, artists and albums.</p>
+  <div class="filters">
+   <select id="genreFilter" aria-label="Genre" onchange="resetMood()"></select>
+   <select id="artistFilter" aria-label="Artist" onchange="resetMood()"></select>
+  </div>
+  <div class="filters">
+   <select id="albumFilter" aria-label="Album" onchange="resetMood()"></select>
+   <select id="rightsFilter" aria-label="Rights status" onchange="resetMood()">
+    <option value="All">All rights statuses</option>
+    <option value="Demo only">Demo only</option>
+    <option value="Cleared">Cleared</option>
+   </select>
+  </div>
+  <p id="catalogueCount" class="muted"></p>
+  <div id="allTracks"></div>
+  <h2>Browse Artists</h2>
+  <div id="artists" class="grid"></div>
+  <h2>Browse Albums</h2>
+  <div id="albums" class="grid"></div>
+ </section>
 
-<section id="search" class="hidden">
-<h2>Search Music</h2>
-<input class="searchbox" id="query" type="search"
-placeholder="Songs, artists, albums or genres..."
-oninput="renderSearch()">
-<h2>Results</h2>
-<div id="results"></div>
-</section>
-
-<section id="discover" class="hidden">
-<h2>Music Catalogue</h2>
-<p class="muted">Browse genres, artists and albums.</p>
-
-<div class="filters">
-<select id="genreFilter" onchange="renderCatalogue()"></select>
-<select id="artistFilter" onchange="renderCatalogue()"></select>
-</div>
-<div class="filters">
-<select id="albumFilter" onchange="renderCatalogue()"></select>
-<select id="rightsFilter" onchange="renderCatalogue()">
-<option value="All">All rights statuses</option>
-<option value="Demo only">Demo only</option>
-<option value="Cleared">Cleared</option>
-</select>
-</div>
-
-<p id="catalogueCount" class="muted"></p>
-<div id="allTracks"></div>
-
-<h2>Browse Artists</h2>
-<div id="artists" class="grid"></div>
-<h2>Browse Albums</h2>
-<div id="albums" class="grid"></div>
-</section>
-
-<section id="library" class="hidden">
-<h2>Your Library</h2>
-<p class="muted" id="libraryStatus">Your personal music library.</p>
-<button class="primary" onclick="createPlaylist()">＋ Create Playlist</button>
-<h2>My Playlists</h2>
-<div id="playlists"></div>
-<h2>Liked Songs</h2>
-<div id="likes"></div>
-</section>
-
-<p class="notice">
-VYBE Music is a prototype. SoundHelix demo audio is not
-verified for commercial on-demand streaming.
-Obtain music rights before commercial distribution.
-</p>
+ <section id="library" class="hidden">
+  <h2>Your Library</h2>
+  <p class="muted" id="libraryStatus">Your personal music library.</p>
+  <button class="primary" onclick="createPlaylist()">＋ Create Playlist</button>
+  <h2>My Playlists</h2><div id="playlists"></div>
+  <h2>Liked Songs</h2><div id="likes"></div>
+ </section>
+ <p class="notice">
+  VYBE Music is a prototype. See Track Info for artist credits and licensing.
+  Commercial streaming rights for the four SoundHelix demo recordings are unverified.
+ </p>
 </main>
 
 <div class="mini">
-<div class="minirow">
-<button class="miniart" id="miniArt"
-onclick="openNowPlaying()">♫</button>
-<div class="miniinfo" onclick="openNowPlaying()">
-<b id="miniTitle">Choose a song</b>
-<small id="miniArtist">VYBE Music</small>
-</div>
-<button class="minibtn" onclick="previous()">⏮</button>
-<button class="minibtn" id="miniPlay" onclick="togglePlay()">▶</button>
-<button class="minibtn" onclick="next()">⏭</button>
-</div>
-<div class="minibar" onclick="openNowPlaying()">
-<div class="minifill" id="miniFill"></div>
-</div>
+ <div class="minirow">
+  <button class="miniart" id="miniArt" onclick="openNowPlaying()">♫</button>
+  <div class="miniinfo" onclick="openNowPlaying()">
+   <b id="miniTitle">Choose a song</b><small id="miniArtist">VYBE Music</small>
+  </div>
+  <button class="minibtn" aria-label="Previous" onclick="previous()">⏮</button>
+  <button class="minibtn" aria-label="Play or pause" id="miniPlay" onclick="togglePlay()">▶</button>
+  <button class="minibtn" aria-label="Next" onclick="next()">⏭</button>
+ </div>
+ <div class="minibar" onclick="openNowPlaying()"><div class="minifill" id="miniFill"></div></div>
 </div>
 
 <nav>
-<button class="active" onclick="showTab('home',this)">
-<span>⌂</span>Home</button>
-<button onclick="showTab('search',this)">
-<span>⌕</span>Search</button>
-<button onclick="showTab('discover',this)">
-<span>♫</span>Discover</button>
-<button onclick="showTab('library',this)">
-<span>♡</span>Library</button>
+ <button class="active" onclick="showTab('home',this)"><span>⌂</span>Home</button>
+ <button onclick="showTab('search',this)"><span>⌕</span>Search</button>
+ <button onclick="showTab('discover',this)"><span>♫</span>Discover</button>
+ <button onclick="showTab('library',this)"><span>♡</span>Library</button>
 </nav>
 
 <div id="nowPlaying" class="nowplaying hidden">
-<div class="nowtop">
-<button onclick="closeNowPlaying()">⌄</button>
-<small>NOW PLAYING</small>
-<button onclick="choosePlaylist(current)">＋</button>
+ <div class="nowtop">
+  <button aria-label="Close player" onclick="closeNowPlaying()">⌄</button>
+  <small>NOW PLAYING</small>
+  <button onclick="choosePlaylist(current)">＋</button>
+ </div>
+ <div class="bigart" id="bigArt">♫</div>
+ <div class="songhead">
+  <div><h2 id="fullTitle">Choose a song</h2><p id="fullArtist">VYBE Music</p></div>
+  <button id="fullHeart" onclick="like(current)">♡</button>
+ </div>
+ <input id="progress" aria-label="Playback position" type="range" min="0" max="100" value="0" oninput="seek(this.value)">
+ <div class="times"><span id="elapsed">0:00</span><span id="duration">0:00</span></div>
+ <div class="bigcontrols">
+  <button id="shuffleBtn" onclick="toggleShuffle()">⇄</button>
+  <button onclick="previous()">⏮</button>
+  <button class="mainplay" id="fullPlay" onclick="togglePlay()">▶</button>
+  <button onclick="next()">⏭</button>
+  <button id="repeatBtn" onclick="toggleRepeat()">↻</button>
+ </div>
+ <div class="playerbottom">
+  <button onclick="choosePlaylist(current)">＋ Playlist</button>
+  <button onclick="showLicence(current)">ⓘ Track Info</button>
+ </div>
+ <p class="muted" id="repeatLabel" style="text-align:center">Repeat off</p>
 </div>
 
-<div class="bigart" id="bigArt">♫</div>
-<div class="songhead">
-<div>
-<h2 id="fullTitle">Choose a song</h2>
-<p id="fullArtist">VYBE Music</p>
-</div>
-<button id="fullHeart" onclick="like(current)">♡</button>
-</div>
-
-<input id="progress" type="range" min="0" max="100"
-value="0" oninput="seek(this.value)">
-
-<div class="times">
-<span id="elapsed">0:00</span>
-<span id="duration">0:00</span>
-</div>
-
-<div class="bigcontrols">
-<button id="shuffleBtn" onclick="toggleShuffle()">⇄</button>
-<button onclick="previous()">⏮</button>
-<button class="mainplay" id="fullPlay"
-onclick="togglePlay()">▶</button>
-<button onclick="next()">⏭</button>
-<button id="repeatBtn" onclick="toggleRepeat()">↻</button>
-</div>
-
-<div class="playerbottom">
-<button onclick="choosePlaylist(current)">＋ Playlist</button>
-<button onclick="showLicence(current)">ⓘ Track Info</button>
-</div>
-<p class="muted" id="repeatLabel" style="text-align:center">
-Repeat off
-</p>
-</div>
-
-<div id="modal" class="modal hidden"
-onclick="if(event.target===this)closeModal()">
-<div class="sheet">
-<button class="close" onclick="closeModal()">✕</button>
-<div id="modalContent"></div>
-</div>
+<div id="modal" class="modal hidden" onclick="if(event.target===this)closeModal()">
+ <div class="sheet">
+  <button class="close" aria-label="Close" onclick="closeModal()">✕</button>
+  <div id="modalContent"></div>
+ </div>
 </div>
 
 <div id="authScreen" class="authscreen hidden">
-<div class="authcard">
-<button class="authlink" onclick="closeAuth()">← Back to music</button>
-<div class="logo">VYBE<span> MUSIC</span></div>
-<h1 id="authHeading">Welcome back.</h1>
-<p id="authDescription">Sign in to access your music library.</p>
-
-<form id="authForm" onsubmit="submitAuth(event)">
-<input class="authinput" id="authEmail" type="email"
-placeholder="Email address" autocomplete="email" required>
-<input class="authinput" id="authPassword" type="password"
-placeholder="Password" minlength="6" autocomplete="current-password" required>
-<button class="primary authaction" id="authSubmit"
-type="submit">Sign In</button>
-</form>
-
-<p id="authMessage"></p>
-<div style="text-align:center">
-<button class="authlink" id="authSwitch"
-onclick="switchAuth()">Create an account</button>
-</div>
-</div>
+ <div class="authcard">
+  <button class="authlink" onclick="closeAuth()">← Back to music</button>
+  <div class="logo">VYBE<span> MUSIC</span></div>
+  <h1 id="authHeading">Welcome back.</h1>
+  <p id="authDescription">Sign in to access your music library.</p>
+  <form id="authForm" onsubmit="submitAuth(event)">
+   <input class="authinput" id="authEmail" type="email" placeholder="Email address" autocomplete="email" required>
+   <input class="authinput" id="authPassword" type="password" placeholder="Password" minlength="6" autocomplete="current-password" required>
+   <button class="primary authaction" id="authSubmit" type="submit">Sign In</button>
+  </form>
+  <p id="authMessage" aria-live="polite"></p>
+  <div style="text-align:center">
+   <button class="authlink" id="authSwitch" onclick="switchAuth()">Create an account</button>
+  </div>
+ </div>
 </div>
 
 <audio id="audio" preload="none"></audio>
 
 <script>
-const SUPABASE_URL='https://tatpzzyzegquynfgaxoc.supabase.co';
-const SUPABASE_KEY='sb_publishable_yKjsocVguLbup2MuMJAasA_zey6hS-O';
+const SUPABASE_URL = 'https://tatpzzyzegquynfgaxoc.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_yKjsocVguLbup2MuMJAasA_zey6hS-O';
 
-let db=null;
-let connectionIssue='';
-const SUPABASE_SDK_URLS=[
- 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js',
- 'https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js'
-];
-function loadSdk(url){
- return new Promise((resolve,reject)=>{
-  const script=document.createElement('script');
-  script.src=url;script.async=true;
-  script.onload=()=>window.supabase?.createClient?resolve():reject(new Error('SDK unavailable'));
-  script.onerror=()=>reject(new Error('Could not load '+url));
-  document.head.appendChild(script);
- });
+const $ = id => document.getElementById(id);
+const audio = $('audio');
+const fmaAudio = 'https://files.freemusicarchive.org/storage-freemusicarchive-org/tracks/';
+const fmaPage = 'https://freemusicarchive.org/music/';
+const cc = 'https://creativecommons.org/licenses/';
+
+function demoTrack(number, title, album, genre, mood, emoji) {
+ return {
+  title, album, genre, mood, emoji,
+  artist: 'Demo Instrumental ' + number,
+  url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-' + number + '.mp3',
+  rights: 'Demo only',
+  licence: 'Commercial streaming rights not verified',
+  credit: 'SoundHelix demo audio',
+  source: 'https://www.soundhelix.com/'
+ };
 }
-async function connectSupabase(){
- if(db)return true;
- for(const url of SUPABASE_SDK_URLS){
-  try{
-   if(!window.supabase?.createClient)await loadSdk(url);
-   db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{
-    auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}
-   });
-   connectionIssue='';
-   return true;
-  }catch(err){connectionIssue=err.message;console.warn('VYBE connection:',err)}
+
+function archiveTrack(title, artist, album, file, page, licenceCode) {
+ return {
+  title, artist, album, genre: 'South Asian inspired', mood: 'All', emoji: '🎵',
+  url: fmaAudio + file, rights: 'Cleared', credit: artist,
+  licence: licenceCode === 'by' ? 'CC BY 4.0' : 'CC BY-ND 4.0',
+  licenceUrl: cc + licenceCode + '/4.0/',
+  source: fmaPage + page + '/'
+ };
+}
+
+function macLeodTrack(title, isrc) {
+ return {
+  title, artist: 'Kevin MacLeod', album: 'Incompetech',
+  genre: 'South Asian inspired', mood: 'All', emoji: '🎵',
+  url: 'https://incompetech.com/music/royalty-free/mp3-royaltyfree/' +
+       encodeURIComponent(title) + '.mp3',
+  rights: 'Cleared', licence: 'CC BY 4.0', credit: 'Kevin MacLeod',
+  licenceUrl: cc + 'by/4.0/',
+  source: 'https://incompetech.com/music/royalty-free/index.html?isrc=' + isrc
+ };
+}
+
+// Saved playlists refer to these positions. Append future tracks at the end.
+const songs = [
+ demoTrack(1, 'Dreamscape', 'Dream Sessions', 'Ambient', 'Dream', '🌌'),
+ demoTrack(2, 'Midnight Drive', 'Night Journeys', 'Chill', 'Chill', '🌃'),
+ demoTrack(3, 'Electric Waves', 'Electric Sessions', 'Electronic', 'Energy', '⚡'),
+ demoTrack(4, 'Purple Sky', 'Dream Sessions', 'Ambient', 'Dream', '🌆'),
+ archiveTrack('Bollywood', 'VibeDepot', 'Indian Music',
+  'MmoCO4l9BN813fOuqThq7AefpJsH0lfGPG6yJPBW.mp3',
+  'vibedepot/indian-music/bollywood', 'by-nd'),
+ macLeodTrack('Jalandhar', 'USUAN1400018'),
+ archiveTrack('Sacred India', 'Geoff Harvey – Purple Planet Music', 'Indian Life',
+  'j9REkwklzocOVCywePEtyqD9ryXiZYwTlkWo89oo.bin',
+  'geoff-harvey-purple-planet-music/indian-life/sacred-india-1', 'by'),
+ archiveTrack('India', 'VibeDepot', 'Indian Music',
+  '3xXkRRj2neK80GAK9zCGmSADAOTVotqWO428mjDG.mp3',
+  'vibedepot/indian-music/india', 'by-nd'),
+ macLeodTrack('Dhaka', 'USUAN1400003'),
+ archiveTrack('Free Bollywood Music', 'VibeDepot', 'Indian Music',
+  'HVi4NteH7anOWIjDpbIhzvDKKiO31xBZp7QLraod.mp3',
+  'vibedepot/indian-music/free-bollywood-music', 'by-nd'),
+ macLeodTrack('Desert City', 'USUAN1100564'),
+ archiveTrack('Bollywood Music', 'VibeDepot', 'Indian Music',
+  '4skqF280rTCyD5zMbesxobqV6nQsGieVyz7Crs2w.mp3',
+  'vibedepot/indian-music/bollywood-music', 'by-nd'),
+ archiveTrack('Free Indian Music', 'Waveloom', 'Bollywood',
+  'aLyF49HvknthzA2kelvMoFHfDLzm0vIfOCVNuXng.mp3',
+  'waveloom/bollywood/free-indian-music-1', 'by-nd'),
+ archiveTrack('Free Indian Music', 'VibeDepot', 'Indian Music',
+  'QMRUOdZTansvQ7riGAh48B1fW4ezPjEAkwcVoSJm.mp3',
+  'vibedepot/indian-music/free-indian-music', 'by-nd')
+];
+
+const valid = i => Number.isInteger(i) && i >= 0 && i < songs.length;
+
+function esc(text) {
+ const entities = {'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'};
+ return String(text).replace(/[&<>"']/g, char => entities[char]);
+}
+
+function readLocal(key) {
+ try {
+  return JSON.parse(localStorage.getItem(key)) || [];
+ } catch {
+  return [];
  }
- connectionIssue='Unable to load the Supabase connection. Check your internet, disable content blockers or VPN temporarily, then reload.';
- return false;
-}
-function authFeedback(message,success=false){
- $('authMessage').className=success?'authsuccess':'autherror';
- $('authMessage').textContent=message;
 }
 
-const songs=[
-{
- title:'Dreamscape',artist:'Demo Instrumental 1',
- album:'Dream Sessions',genre:'Ambient',mood:'Dream',
- emoji:'🌌',
- url:'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
- rights:'Demo only',
- licence:'Commercial streaming rights not verified',
- credit:'SoundHelix demo audio',
- licenceUrl:'https://www.soundhelix.com/'
-},
-{
- title:'Midnight Drive',artist:'Demo Instrumental 2',
- album:'Night Journeys',genre:'Chill',mood:'Chill',
- emoji:'🌃',
- url:'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
- rights:'Demo only',
- licence:'Commercial streaming rights not verified',
- credit:'SoundHelix demo audio',
- licenceUrl:'https://www.soundhelix.com/'
-},
-{
- title:'Electric Waves',artist:'Demo Instrumental 3',
- album:'Electric Sessions',genre:'Electronic',mood:'Energy',
- emoji:'⚡',
- url:'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3',
- rights:'Demo only',
- licence:'Commercial streaming rights not verified',
- credit:'SoundHelix demo audio',
- licenceUrl:'https://www.soundhelix.com/'
-},
-{
- title:'Purple Sky',artist:'Demo Instrumental 4',
- album:'Dream Sessions',genre:'Ambient',mood:'Dream',
- emoji:'🌆',
- url:'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3',
- rights:'Demo only',
- licence:'Commercial streaming rights not verified',
- credit:'SoundHelix demo audio',
- licenceUrl:'https://www.soundhelix.com/'
-}
-];
-
-const $=id=>document.getElementById(id);
-const audio=$('audio');
-const valid=i=>Number.isInteger(i)&&i>=0&&i<songs.length;
-
-function safeRead(key,fallback){
- try{
-  const v=JSON.parse(localStorage.getItem(key));
-  return v===null?fallback:v;
- }catch{return fallback}
+function normalTracks(value) {
+ return Array.isArray(value) ? [...new Set(value.filter(valid))] : [];
 }
 
-function normalLikes(v){
- return Array.isArray(v)?[...new Set(v.filter(valid))]:[];
-}
-function normalRecent(v){
- return Array.isArray(v)?[...new Set(v.filter(valid))].slice(0,8):[];
-}
-function normalPlaylists(v){
- if(!Array.isArray(v))return [];
- return v.map(p=>typeof p==='string'?
-  {name:p,tracks:[]}:p)
- .filter(p=>p&&typeof p.name==='string'&&Array.isArray(p.tracks))
- .map(p=>({
-  name:p.name.slice(0,60),
-  tracks:[...new Set(p.tracks.filter(valid))]
- }));
+function normalPlaylists(value) {
+ if (!Array.isArray(value)) return [];
+ return value
+  .map(p => typeof p === 'string' ? {name:p, tracks:[]} : p)
+  .filter(p => p && typeof p.name === 'string' && Array.isArray(p.tracks))
+  .map(p => ({name:p.name.slice(0, 60), tracks:normalTracks(p.tracks)}));
 }
 
-let favourites=normalLikes(safeRead('vybeLikes',[]));
-let playlists=normalPlaylists(safeRead('vybePlaylists',[]));
-let recent=normalRecent(safeRead('vybeRecent',[]));
+let favourites = normalTracks(readLocal('vybeLikes'));
+let playlists = normalPlaylists(readLocal('vybePlaylists'));
+let recent = normalTracks(readLocal('vybeRecent')).slice(0, 8);
+let current = 0;
+let started = false;
+let shuffle = false;
+let repeat = 0;
+let mood = 'All';
 
-let current=0,started=false,shuffle=false,repeat=0;
-let user=null,cloudReady=false,authMode='signin';
-let cloudTimer=null,cloudRevision=0,cloudSaving=false;
-let guestSnapshot=null;
-let authBusy=false;
+let db = null;
+let connecting = null;
+let user = null;
+let guestSnapshot = null;
+let cloudReady = false;
+let cloudTimer = null;
+let cloudRevision = 0;
+let pendingSave = null;
+let activation = null;
+let authMode = 'signin';
+let authBusy = false;
 
-function snapshot(){
+function snapshot() {
  return {
   likes:[...favourites],
-  playlists:JSON.parse(JSON.stringify(playlists)),
+  playlists:playlists.map(p => ({name:p.name, tracks:[...p.tracks]})),
   recent:[...recent]
  };
 }
 
-function applyLibrary(data){
- favourites=normalLikes(data.likes);
- playlists=normalPlaylists(data.playlists);
- recent=normalRecent(data.recent);
+function applyLibrary(data) {
+ favourites = normalTracks(data.likes);
+ playlists = normalPlaylists(data.playlists);
+ recent = normalTracks(data.recent).slice(0, 8);
  render();
 }
 
-function localSave(){
- localStorage.setItem('vybeLikes',JSON.stringify(favourites));
- localStorage.setItem('vybePlaylists',JSON.stringify(playlists));
- localStorage.setItem('vybeRecent',JSON.stringify(recent));
-}
-
-function save(){
- if(user){
-  if(!cloudReady)return;
-  cloudRevision++;
-  clearTimeout(cloudTimer);
-  cloudTimer=setTimeout(flushCloud,600);
- }else{
-  localSave();
- }
-}
-
-async function flushCloud(){
- if(!db||!user||!cloudReady||cloudSaving)return;
- cloudSaving=true;
- const owner=user.id;
- try{
-  while(user&&user.id===owner&&cloudReady){
-   const revision=cloudRevision;
-   const data=snapshot();
-   const {error}=await db.from('user_libraries').upsert({
-    user_id:owner,
-    likes:data.likes,
-    playlists:data.playlists,
-    recent:data.recent,
-    updated_at:new Date().toISOString()
-   },{onConflict:'user_id'});
-   if(error)throw error;
-   if(revision===cloudRevision){
-    $('libraryStatus').textContent='☁ Saved to your VYBE account';
-    break;
-   }
+function save() {
+ if (!user) {
+  try {
+   localStorage.setItem('vybeLikes', JSON.stringify(favourites));
+   localStorage.setItem('vybePlaylists', JSON.stringify(playlists));
+   localStorage.setItem('vybeRecent', JSON.stringify(recent));
+  } catch {
+   $('libraryStatus').textContent = 'Device storage unavailable.';
   }
- }catch(e){
-  console.error(e);
-  $('libraryStatus').textContent='⚠ Cloud save failed. Please retry.';
- }finally{
-  cloudSaving=false;
+  return;
  }
+ if (!cloudReady) return;
+ cloudRevision++;
+ clearTimeout(cloudTimer);
+ cloudTimer = setTimeout(flushCloud, 600);
 }
 
-function esc(t){
- return String(t).replace(/[&<>"']/g,c=>({
-  '&':'&amp;','<':'&lt;','>':'&gt;',
-  '"':'&quot;',"'":'&#39;'
- })[c]);
+function flushCloud() {
+ if (pendingSave) return pendingSave;
+ if (!db || !user || !cloudReady) return Promise.resolve(false);
+ const owner = user.id;
+ pendingSave = (async () => {
+  try {
+   while (user && user.id === owner && cloudReady) {
+    const revision = cloudRevision;
+    const data = snapshot();
+    const {error} = await db.from('user_libraries').upsert({
+     user_id:owner, ...data, updated_at:new Date().toISOString()
+    }, {onConflict:'user_id'});
+    if (error) throw error;
+    if (revision === cloudRevision) {
+     if (user?.id === owner) {
+      $('libraryStatus').textContent = '☁ Saved to your VYBE account';
+     }
+     return true;
+    }
+   }
+   return false;
+  } catch (err) {
+   console.error(err);
+   $('libraryStatus').textContent = '⚠ Cloud save failed. Please retry.';
+   return false;
+  }
+ })().finally(() => { pendingSave = null; });
+ return pendingSave;
 }
 
-function formatTime(s){
- if(!Number.isFinite(s))return '0:00';
- return Math.floor(s/60)+':'+
- String(Math.floor(s%60)).padStart(2,'0');
+function formatTime(seconds) {
+ if (!Number.isFinite(seconds)) return '0:00';
+ return Math.floor(seconds / 60) + ':' +
+  String(Math.floor(seconds % 60)).padStart(2, '0');
 }
 
-function syncPlayer(){
- const s=songs[current];
- $('miniTitle').textContent=started?s.title:'Choose a song';
- $('miniArtist').textContent=started?s.artist:'VYBE Music';
- $('miniArt').textContent=started?s.emoji:'♫';
- $('bigArt').textContent=started?s.emoji:'♫';
- $('fullTitle').textContent=started?s.title:'Choose a song';
- $('fullArtist').textContent=started?s.artist:'VYBE Music';
- $('fullHeart').textContent=favourites.includes(current)?'♥':'♡';
- $('fullHeart').classList.toggle('selected',favourites.includes(current));
+function updateButton() {
+ const symbol = audio.paused ? '▶' : '⏸';
+ $('miniPlay').textContent = symbol;
+ $('fullPlay').textContent = symbol;
+}
+
+function syncPlayer() {
+ const song = songs[current];
+ $('miniTitle').textContent = started ? song.title : 'Choose a song';
+ $('miniArtist').textContent = started ? song.artist : 'VYBE Music';
+ $('miniArt').textContent = started ? song.emoji : '♫';
+ $('bigArt').textContent = $('miniArt').textContent;
+ $('fullTitle').textContent = $('miniTitle').textContent;
+ $('fullArtist').textContent = $('miniArtist').textContent;
+ $('fullHeart').textContent = favourites.includes(current) ? '♥' : '♡';
+ $('fullHeart').classList.toggle('selected', favourites.includes(current));
  updateButton();
 }
 
-function playSong(i){
- if(!valid(i))return;
- current=i;started=true;
- audio.src=songs[i].url;
- recent=[i,...recent.filter(x=>x!==i)].slice(0,8);
- save();
- $('progress').value=0;
- $('miniFill').style.width='0%';
- $('elapsed').textContent='0:00';
- $('duration').textContent='0:00';
- syncPlayer();render();
- audio.play().catch(()=>{
+function playSong(i) {
+ if (!valid(i)) return;
+ current = i;
+ started = true;
+ audio.src = songs[i].url;
+ if (!user || cloudReady) {
+  recent = [i, ...recent.filter(x => x !== i)].slice(0, 8);
+  save();
+ }
+ $('progress').value = 0;
+ $('miniFill').style.width = '0%';
+ $('elapsed').textContent = '0:00';
+ $('duration').textContent = '0:00';
+ render();
+ audio.play().catch(err => {
+  if (err.name === 'AbortError') return;
   updateButton();
-  alert('Unable to play this track. Check your internet connection.');
+  alert('Unable to play this track. Check your connection and try again.');
  });
 }
 
-function togglePlay(){
- if(!started)return playSong(0);
- if(audio.paused){
-  audio.play().catch(()=>alert('Playback unavailable'));
- }else audio.pause();
+function togglePlay() {
+ if (!started) return playSong(0);
+ if (audio.paused) audio.play().catch(() => alert('Playback unavailable.'));
+ else audio.pause();
 }
 
-function updateButton(){
- const symbol=audio.paused?'▶':'⏸';
- $('miniPlay').textContent=symbol;
- $('fullPlay').textContent=symbol;
+function next() {
+ if (shuffle && songs.length > 1) {
+  const offset = 1 + Math.floor(Math.random() * (songs.length - 1));
+  playSong((current + offset) % songs.length);
+ } else {
+  playSong((current + 1) % songs.length);
+ }
 }
 
-function next(){
- if(shuffle&&songs.length>1){
-  let n;
-  do{n=Math.floor(Math.random()*songs.length)}
-  while(n===current);
-  playSong(n);
- }else playSong((current+1)%songs.length);
+function previous() {
+ if (audio.currentTime > 3) {
+  audio.currentTime = 0;
+ } else {
+  playSong((current - 1 + songs.length) % songs.length);
+ }
 }
 
-function previous(){
- if(audio.currentTime>3){audio.currentTime=0;return}
- playSong((current-1+songs.length)%songs.length);
+function seek(value) {
+ if (Number.isFinite(audio.duration) && audio.duration > 0) {
+  audio.currentTime = audio.duration * Number(value) / 100;
+ }
 }
 
-function seek(v){
- if(Number.isFinite(audio.duration)&&audio.duration>0)
-  audio.currentTime=audio.duration*Number(v)/100;
+function toggleShuffle() {
+ shuffle = !shuffle;
+ $('shuffleBtn').classList.toggle('selected', shuffle);
 }
 
-function toggleShuffle(){
- shuffle=!shuffle;
- $('shuffleBtn').classList.toggle('selected',shuffle);
+function toggleRepeat() {
+ repeat = (repeat + 1) % 3;
+ $('repeatLabel').textContent = ['Repeat off', 'Repeat all', 'Repeat one'][repeat];
+ $('repeatBtn').classList.toggle('selected', repeat !== 0);
+ $('repeatBtn').textContent = repeat === 2 ? '↻₁' : '↻';
 }
 
-function toggleRepeat(){
- repeat=(repeat+1)%3;
- $('repeatLabel').textContent=[
-  'Repeat off','Repeat all','Repeat one'
- ][repeat];
- $('repeatBtn').classList.toggle('selected',repeat!==0);
- $('repeatBtn').textContent=repeat===2?'↻₁':'↻';
-}
-
-audio.ontimeupdate=()=>{
- $('elapsed').textContent=formatTime(audio.currentTime);
- if(Number.isFinite(audio.duration)&&audio.duration>0){
-  const p=100*audio.currentTime/audio.duration;
-  $('progress').value=p;
-  $('miniFill').style.width=p+'%';
+audio.ontimeupdate = () => {
+ $('elapsed').textContent = formatTime(audio.currentTime);
+ if (Number.isFinite(audio.duration) && audio.duration > 0) {
+  const pct = 100 * audio.currentTime / audio.duration;
+  $('progress').value = pct;
+  $('miniFill').style.width = pct + '%';
  }
 };
-audio.onloadedmetadata=()=>{
- $('duration').textContent=formatTime(audio.duration);
+audio.onloadedmetadata = () => {
+ $('duration').textContent = formatTime(audio.duration);
 };
-audio.onplay=updateButton;
-audio.onpause=updateButton;
-audio.onended=()=>{
- if(repeat===2){
-  audio.currentTime=0;
+audio.onplay = updateButton;
+audio.onpause = updateButton;
+audio.onended = () => {
+ if (repeat === 2) {
+  audio.currentTime = 0;
   audio.play().catch(updateButton);
- }else if(repeat===1||shuffle||current<songs.length-1){
+ } else if (repeat === 1 || shuffle || current < songs.length - 1) {
   next();
- }else updateButton();
+ } else {
+  updateButton();
+ }
 };
 
-function openNowPlaying(){
- if(!started)playSong(0);
+function openNowPlaying() {
+ if (!started) playSong(0);
  syncPlayer();
  $('nowPlaying').classList.remove('hidden');
- document.body.style.overflow='hidden';
-}
-function closeNowPlaying(){
- $('nowPlaying').classList.add('hidden');
- document.body.style.overflow='';
+ document.body.style.overflow = 'hidden';
 }
 
-function trackRow(s,i,add=true){
+function closeNowPlaying() {
+ $('nowPlaying').classList.add('hidden');
+ document.body.style.overflow = '';
+}
+
+function trackRow(i) {
+ const s = songs[i];
+ const liked = favourites.includes(i);
  return `<div class="track">
- <button class="cover" onclick="playSong(${i})">${s.emoji}</button>
- <div class="details" onclick="playSong(${i})">
- <b>${esc(s.title)}</b>
- <small>${esc(s.artist)} · ${esc(s.genre)}</small></div>
- <button class="iconbtn ${favourites.includes(i)?'selected':''}"
- onclick="like(${i})">${favourites.includes(i)?'♥':'♡'}</button>
- ${add?`<button class="iconbtn"
- onclick="choosePlaylist(${i})">＋</button>`:''}
- <button class="iconbtn" onclick="showLicence(${i})">ⓘ</button>
+  <button class="cover" aria-label="Play ${esc(s.title)}" onclick="playSong(${i})">${s.emoji}</button>
+  <div class="details" onclick="playSong(${i})">
+   <b>${esc(s.title)}</b><small>${esc(s.artist)} · ${esc(s.genre)}</small>
+  </div>
+  <button class="iconbtn ${liked ? 'selected' : ''}" aria-label="Toggle favourite"
+   onclick="like(${i})">${liked ? '♥' : '♡'}</button>
+  <button class="iconbtn" aria-label="Add to playlist" onclick="choosePlaylist(${i})">＋</button>
+  <button class="iconbtn" aria-label="Track information" onclick="showLicence(${i})">ⓘ</button>
  </div>`;
 }
 
-function render(){
- $('featured').innerHTML=songs.map((s,i)=>`
- <button class="card" onclick="playSong(${i})">
- <div class="art">${s.emoji}</div>
- <h3>${esc(s.title)}</h3>
- <p>${esc(s.artist)}</p></button>`).join('');
+function trackList(indices, emptyMessage) {
+ return indices.length ? indices.map(trackRow).join('') :
+  `<p class="empty">${esc(emptyMessage)}</p>`;
+}
 
- $('recent').innerHTML=recent.length?
- recent.map(i=>trackRow(songs[i],i)).join(''):
- '<p class="empty">Play a song to see it here.</p>';
-
- $('likes').innerHTML=favourites.length?
- favourites.map(i=>trackRow(songs[i],i)).join(''):
- '<p class="empty">No liked songs yet.</p>';
-
- $('playlists').innerHTML=playlists.length?
- playlists.map((p,i)=>`
- <div class="playlist"><div class="playlisthead">
- <div><h3>🎵 ${esc(p.name)}</h3>
- <small>${p.tracks.length} songs</small></div>
- <button class="pill" onclick="openPlaylist(${i})">Open</button>
- </div></div>`).join(''):
- '<p class="empty">No playlists yet.</p>';
-
+function render() {
+ $('featured').innerHTML = songs.map((s, i) => `
+  <button class="card" onclick="playSong(${i})">
+   <div class="art">${s.emoji}</div>
+   <h3>${esc(s.title)}</h3><p>${esc(s.artist)}</p>
+  </button>`).join('');
+ $('recent').innerHTML = trackList(recent, 'Play a song to see it here.');
+ $('likes').innerHTML = trackList(favourites, 'No liked songs yet.');
+ $('playlists').innerHTML = playlists.length ? playlists.map((p, i) => `
+  <div class="playlist"><div class="playlisthead">
+   <div><h3>🎵 ${esc(p.name)}</h3><small>${p.tracks.length} songs</small></div>
+   <button class="pill" onclick="openPlaylist(${i})">Open</button>
+  </div></div>`).join('') : '<p class="empty">No playlists yet.</p>';
  renderSearch();
  renderCatalogue();
  syncPlayer();
 }
 
-function like(i){
- if(!valid(i))return;
- favourites=favourites.includes(i)?
- favourites.filter(x=>x!==i):[...favourites,i];
- save();render();
-}
-
-function renderSearch(){
- const q=$('query').value.toLowerCase().trim();
- const matches=songs.map((s,i)=>({s,i}))
- .filter(x=>[
-  x.s.title,x.s.artist,x.s.album,x.s.genre,x.s.mood
- ].join(' ').toLowerCase().includes(q));
- $('results').innerHTML=matches.length?
- matches.map(x=>trackRow(x.s,x.i)).join(''):
- '<p class="empty">No songs found.</p>';
-}
-
-function showTab(id,btn){
- document.querySelectorAll('main section').forEach(
-  x=>x.classList.add('hidden'));
- $(id).classList.remove('hidden');
- document.querySelectorAll('nav button').forEach(
-  x=>x.classList.remove('active'));
- if(btn)btn.classList.add('active');
- window.scrollTo(0,0);
-}
-
-function filterMood(m){
- showTab('discover',document.querySelectorAll('nav button')[2]);
- ['genreFilter','artistFilter','albumFilter','rightsFilter']
- .forEach(id=>$(id).value='All');
- renderCatalogue();
- const matches=songs.map((s,i)=>({s,i}))
- .filter(x=>m==='All'||x.s.mood===m);
- $('allTracks').innerHTML=matches.map(
-  x=>trackRow(x.s,x.i)).join('')||
- '<p class="empty">No tracks for this mood.</p>';
- $('catalogueCount').textContent=
- m==='All'?'All demo tracks':m+' mood tracks';
-}
-
-function fillFilter(id,values,label){
- $(id).innerHTML=
- `<option value="All">All ${esc(label)}</option>`+
- [...new Set(values)].sort().map(v=>
- `<option value="${esc(v)}">${esc(v)}</option>`).join('');
-}
-
-function initFilters(){
- fillFilter('genreFilter',songs.map(s=>s.genre),'genres');
- fillFilter('artistFilter',songs.map(s=>s.artist),'artists');
- fillFilter('albumFilter',songs.map(s=>s.album),'albums');
-}
-
-function renderCatalogue(){
- const g=$('genreFilter').value;
- const a=$('artistFilter').value;
- const al=$('albumFilter').value;
- const r=$('rightsFilter').value;
- const matches=songs.map((s,i)=>({s,i}))
- .filter(x=>
- (g==='All'||x.s.genre===g)&&
- (a==='All'||x.s.artist===a)&&
- (al==='All'||x.s.album===al)&&
- (r==='All'||x.s.rights===r));
-
- $('catalogueCount').textContent=matches.length+' tracks found';
- $('allTracks').innerHTML=matches.length?
- matches.map(x=>trackRow(x.s,x.i)).join(''):
- '<p class="empty">No matching tracks.</p>';
-
- const artists=[...new Set(songs.map(s=>s.artist))];
- $('artists').innerHTML=artists.map(a=>{
-  const i=songs.findIndex(s=>s.artist===a);
-  return `<button class="card" onclick="browseArtist(${i})">
-  <div class="art">🎤</div>
-  <h3>${esc(a)}</h3>
-  <p>${songs.filter(s=>s.artist===a).length} tracks</p>
-  </button>`;
- }).join('');
-
- const albums=[...new Set(songs.map(s=>s.album))];
- $('albums').innerHTML=albums.map(a=>{
-  const i=songs.findIndex(s=>s.album===a);
-  return `<button class="card" onclick="browseAlbum(${i})">
-  <div class="art">💿</div>
-  <h3>${esc(a)}</h3>
-  <p>${songs.filter(s=>s.album===a).length} tracks</p>
-  </button>`;
- }).join('');
-}
-
-function browseArtist(i){
- ['genreFilter','albumFilter','rightsFilter']
- .forEach(id=>$(id).value='All');
- $('artistFilter').value=songs[i].artist;
- renderCatalogue();window.scrollTo(0,0);
-}
-function browseAlbum(i){
- ['genreFilter','artistFilter','rightsFilter']
- .forEach(id=>$(id).value='All');
- $('albumFilter').value=songs[i].album;
- renderCatalogue();window.scrollTo(0,0);
-}
-
-function canEdit(){
- if(user&&!cloudReady){
+function canEdit() {
+ if (user && !cloudReady) {
   alert('Please wait for your cloud library to load.');
   return false;
  }
  return true;
 }
 
-function createPlaylist(){
- if(!canEdit())return;
- const name=prompt('Enter playlist name:');
- if(!name||!name.trim())return;
- playlists.push({name:name.trim().slice(0,60),tracks:[]});
- save();render();
+function like(i) {
+ if (!valid(i) || !canEdit()) return;
+ favourites = favourites.includes(i) ?
+  favourites.filter(x => x !== i) : [...favourites, i];
+ save();
+ render();
 }
 
-function openModal(html){
- $('modalContent').innerHTML=html;
+function renderSearch() {
+ const query = $('query').value.toLowerCase().trim();
+ const matches = songs.map((s, i) => i).filter(i => {
+  const s = songs[i];
+  return [s.title, s.artist, s.album, s.genre, s.mood]
+   .join(' ').toLowerCase().includes(query);
+ });
+ $('results').innerHTML = trackList(matches, 'No songs found.');
+}
+
+function showTab(id, button) {
+ document.querySelectorAll('main section').forEach(s => {
+  s.classList.toggle('hidden', s.id !== id);
+ });
+ document.querySelectorAll('nav button').forEach(b => {
+  b.classList.toggle('active', b === button);
+ });
+ window.scrollTo(0, 0);
+}
+
+const filters = {
+ genre:'genreFilter', artist:'artistFilter', album:'albumFilter', rights:'rightsFilter'
+};
+
+function resetFilters() {
+ Object.values(filters).forEach(id => { $(id).value = 'All'; });
+}
+
+function resetMood() {
+ mood = 'All';
+ renderCatalogue();
+}
+
+function filterMood(value) {
+ resetFilters();
+ mood = value;
+ showTab('discover', document.querySelectorAll('nav button')[2]);
+ renderCatalogue();
+}
+
+function initFilters() {
+ for (const [field, label] of [['genre','genres'], ['artist','artists'], ['album','albums']]) {
+  const values = [...new Set(songs.map(s => s[field]))].sort();
+  $(filters[field]).innerHTML = `<option value="All">All ${label}</option>` +
+   values.map(v => `<option value="${esc(v)}">${esc(v)}</option>`).join('');
+ }
+}
+
+function browse(field, i) {
+ resetFilters();
+ mood = 'All';
+ $(filters[field]).value = songs[i][field];
+ renderCatalogue();
+ window.scrollTo(0, 0);
+}
+
+function browseCards(field, icon) {
+ const values = [...new Set(songs.map(s => s[field]))];
+ return values.map(value => {
+  const i = songs.findIndex(s => s[field] === value);
+  const count = songs.filter(s => s[field] === value).length;
+  return `<button class="card" onclick="browse('${field}',${i})">
+   <div class="art">${icon}</div><h3>${esc(value)}</h3><p>${count} tracks</p>
+  </button>`;
+ }).join('');
+}
+
+function renderCatalogue() {
+ const matches = songs.map((s, i) => i).filter(i => {
+  const s = songs[i];
+  return (mood === 'All' || s.mood === mood) &&
+   Object.entries(filters).every(([field, id]) =>
+    $(id).value === 'All' || $(id).value === s[field]);
+ });
+ $('catalogueCount').textContent = matches.length + ' tracks found';
+ $('allTracks').innerHTML = trackList(matches, 'No matching tracks.');
+ $('artists').innerHTML = browseCards('artist', '🎤');
+ $('albums').innerHTML = browseCards('album', '💿');
+}
+
+function createPlaylist() {
+ if (!canEdit()) return;
+ const name = prompt('Enter playlist name:');
+ if (!name || !name.trim()) return;
+ playlists.push({name:name.trim().slice(0, 60), tracks:[]});
+ save();
+ render();
+}
+
+function openModal(content) {
+ $('modalContent').innerHTML = content;
  $('modal').classList.remove('hidden');
 }
-function closeModal(){
+
+function closeModal() {
  $('modal').classList.add('hidden');
 }
 
-function choosePlaylist(i){
- if(!valid(i)||!canEdit())return;
- if(!playlists.length){
-  if(confirm('Create a playlist first?')){
-   createPlaylist();
-   if(!playlists.length)return;
-  }else return;
+function choosePlaylist(i) {
+ if (!valid(i) || !canEdit()) return;
+ if (!playlists.length) {
+  if (!confirm('Create a playlist first?')) return;
+  createPlaylist();
+  if (!playlists.length) return;
  }
- openModal('<h2>Add to Playlist</h2>'+
- playlists.map((p,j)=>`
- <button class="sheetitem" onclick="addToPlaylist(${j},${i})">
- 🎵 ${esc(p.name)}</button>`).join(''));
+ openModal('<h2>Add to Playlist</h2>' + playlists.map((p, j) =>
+  `<button class="sheetitem" onclick="addToPlaylist(${j},${i})">
+   🎵 ${esc(p.name)}</button>`).join(''));
 }
 
-function addToPlaylist(p,i){
- if(!playlists[p]||!valid(i)||!canEdit())return;
- if(!playlists[p].tracks.includes(i))
-  playlists[p].tracks.push(i);
- save();render();closeModal();
+function addToPlaylist(p, i) {
+ if (!playlists[p] || !valid(i) || !canEdit()) return;
+ if (!playlists[p].tracks.includes(i)) playlists[p].tracks.push(i);
+ save();
+ render();
+ closeModal();
 }
 
-function removeFromPlaylist(p,i){
- if(!playlists[p]||!canEdit())return;
- playlists[p].tracks=playlists[p].tracks.filter(x=>x!==i);
- save();render();openPlaylist(p);
+function removeFromPlaylist(p, i) {
+ if (!playlists[p] || !canEdit()) return;
+ playlists[p].tracks = playlists[p].tracks.filter(x => x !== i);
+ save();
+ render();
+ openPlaylist(p);
 }
 
-function deletePlaylist(p){
- if(!canEdit()||!confirm('Delete this playlist?'))return;
- playlists.splice(p,1);
- save();render();closeModal();
+function deletePlaylist(p) {
+ if (!playlists[p] || !canEdit() || !confirm('Delete this playlist?')) return;
+ playlists.splice(p, 1);
+ save();
+ render();
+ closeModal();
 }
 
-function openPlaylist(p){
- const list=playlists[p];
- if(!list)return;
- const tracks=list.tracks.filter(valid);
- openModal(`<h2>${esc(list.name)}</h2>
- <p class="muted">${tracks.length} songs</p>`+
- (tracks.length?tracks.map(i=>`
- <div class="track">
- <button class="cover" onclick="playSong(${i})">${songs[i].emoji}</button>
- <div class="details" onclick="playSong(${i})">
- <b>${esc(songs[i].title)}</b>
- <small>${esc(songs[i].artist)}</small></div>
- <button class="pill" onclick="removeFromPlaylist(${p},${i})">
- Remove</button></div>`).join(''):
- '<p class="empty">Add songs using ＋ in Discover.</p>')+
- `<p><button class="pill" onclick="deletePlaylist(${p})">
- Delete Playlist</button></p>`);
+function openPlaylist(p) {
+ const list = playlists[p];
+ if (!list) return;
+ const tracks = list.tracks.filter(valid);
+ const rows = tracks.map(i => `
+  <div class="track">
+   <button class="cover" onclick="playSong(${i})">${songs[i].emoji}</button>
+   <div class="details" onclick="playSong(${i})">
+    <b>${esc(songs[i].title)}</b><small>${esc(songs[i].artist)}</small>
+   </div>
+   <button class="pill" onclick="removeFromPlaylist(${p},${i})">Remove</button>
+  </div>`).join('');
+ openModal(`<h2>${esc(list.name)}</h2><p class="muted">${tracks.length} songs</p>
+  ${rows || '<p class="empty">Add songs using ＋ in Discover.</p>'}
+  <p><button class="pill" onclick="deletePlaylist(${p})">Delete Playlist</button></p>`);
 }
 
-function showLicence(i){
- if(!valid(i))return;
- const s=songs[i];
+function showLicence(i) {
+ if (!valid(i)) return;
+ const s = songs[i];
+ const licence = s.licenceUrl ?
+  `<a href="${esc(s.licenceUrl)}" target="_blank" rel="noopener noreferrer">${esc(s.licence)}</a>` :
+  esc(s.licence);
  openModal(`<h2>Track &amp; Licence</h2>
- <p><b>${esc(s.title)}</b><br>
- <span class="muted">${esc(s.artist)}</span></p>
- <p style="line-height:1.8;font-size:13px">
- <b>Album:</b> ${esc(s.album)}<br>
- <b>Genre:</b> ${esc(s.genre)}<br>
- <b>Status:</b> ${esc(s.rights)}<br>
- <b>Licence:</b> ${esc(s.licence)}<br>
- <b>Credit:</b> ${esc(s.credit)}</p>
- <p class="muted">Commercial streaming rights are not verified.</p>
- <a href="${esc(s.licenceUrl)}" target="_blank"
- rel="noopener noreferrer" style="color:#d6b0ff">
- View source information ↗</a>`);
+  <p><b>${esc(s.title)}</b><br><span class="muted">${esc(s.artist)}</span></p>
+  <p style="line-height:1.8">
+   <b>Album:</b> ${esc(s.album)}<br>
+   <b>Genre:</b> ${esc(s.genre)}<br>
+   <b>Status:</b> ${esc(s.rights)}<br>
+   <b>Licence:</b> ${licence}<br>
+   <b>Credit:</b> ${esc(s.credit)}
+  </p>
+  <a href="${esc(s.source)}" target="_blank" rel="noopener noreferrer">
+   View original recording and credits ↗</a>`);
 }
 
-/* VYBE ACCOUNT SYSTEM */
+function loadSdk(url) {
+ return new Promise((resolve, reject) => {
+  const script = document.createElement('script');
+  script.src = url;
+  script.async = true;
+  script.onload = () => window.supabase?.createClient ?
+   resolve() : reject(new Error('SDK unavailable'));
+  script.onerror = () => reject(new Error('Could not load cloud connection.'));
+  document.head.appendChild(script);
+ });
+}
 
-function openAuth(mode='signin'){
- authMode=mode;
+function connectSupabase() {
+ if (db) return Promise.resolve(true);
+ if (connecting) return connecting;
+ connecting = (async () => {
+  const urls = [
+   'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js',
+   'https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js'
+  ];
+  for (const url of urls) {
+   try {
+    if (!window.supabase?.createClient) await loadSdk(url);
+    db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+     auth:{persistSession:true, autoRefreshToken:true, detectSessionInUrl:true}
+    });
+    return true;
+   } catch (err) {
+    console.warn('VYBE connection:', err.message);
+   }
+  }
+  return false;
+ })().finally(() => { connecting = null; });
+ return connecting;
+}
+
+function authFeedback(message, success = false) {
+ $('authMessage').className = success ? 'authsuccess' : 'autherror';
+ $('authMessage').textContent = message;
+}
+
+function openAuth(mode = 'signin') {
+ authMode = mode;
  $('authScreen').classList.remove('hidden');
  updateAuthScreen();
 }
 
-function closeAuth(){
+function closeAuth() {
  $('authScreen').classList.add('hidden');
- $('authMessage').textContent='';
+ $('authMessage').textContent = '';
 }
 
-function updateAuthScreen(){
- const signup=authMode==='signup';
- $('authHeading').textContent=signup?
- 'Join the VYBE.':'Welcome back.';
- $('authDescription').textContent=signup?
- 'Create your personal music account.':
- 'Sign in to access your music library.';
- $('authSubmit').textContent=signup?'Create Account':'Sign In';
- $('authSwitch').textContent=signup?
- 'Already have an account? Sign In':
- 'New to VYBE? Create Account';
- $('authPassword').autocomplete=signup?
- 'new-password':'current-password';
- $('authMessage').textContent='';
+function updateAuthScreen() {
+ const signup = authMode === 'signup';
+ $('authHeading').textContent = signup ? 'Join the VYBE.' : 'Welcome back.';
+ $('authDescription').textContent = signup ?
+  'Create your personal music account.' : 'Sign in to access your music library.';
+ $('authSubmit').textContent = signup ? 'Create Account' : 'Sign In';
+ $('authSwitch').textContent = signup ?
+  'Already have an account? Sign In' : 'New to VYBE? Create Account';
+ $('authPassword').autocomplete = signup ? 'new-password' : 'current-password';
+ $('authMessage').textContent = '';
 }
 
-function switchAuth(){
- authMode=authMode==='signin'?'signup':'signin';
+function switchAuth() {
+ if (authBusy) return;
+ authMode = authMode === 'signin' ? 'signup' : 'signin';
  updateAuthScreen();
 }
 
-async function submitAuth(e){
- e.preventDefault();
- if(authBusy)return;
- if(!db && !await connectSupabase()){
-  authFeedback(connectionIssue);
-  return;
- }
- const email=$('authEmail').value.trim();
- const password=$('authPassword').value;
- const signup=authMode==='signup';
- authBusy=true;
- $('authSubmit').disabled=true;
- $('authMessage').textContent='Please wait...';
- try{
-  let result;
-  if(signup){
-   result=await db.auth.signUp({
-    email,password,
-    options:{emailRedirectTo:location.origin+location.pathname}
-   });
-  }else{
-   result=await db.auth.signInWithPassword({email,password});
-  }
-  if(result.error)throw result.error;
-  if(signup&&!result.data.session){
-   authFeedback('Account created. Check your email for the confirmation link, then return to VYBE and sign in.',true);
-  }else{
-   authFeedback('Signed in successfully.',true);
-   if(result.data.user)await activateUser(result.data.user);
+async function submitAuth(event) {
+ event.preventDefault();
+ if (authBusy) return;
+ authBusy = true;
+ $('authSubmit').disabled = true;
+ $('authMessage').textContent = 'Please wait...';
+ try {
+  if (!await connectSupabase()) throw new Error('Could not connect. Please reload and try again.');
+  const email = $('authEmail').value.trim();
+  const password = $('authPassword').value;
+  const signup = authMode === 'signup';
+  const result = signup ?
+   await db.auth.signUp({email, password, options:{emailRedirectTo:location.origin + location.pathname}}) :
+   await db.auth.signInWithPassword({email, password});
+  if (result.error) throw result.error;
+  $('authPassword').value = '';
+  if (signup && !result.data.session) {
+   authFeedback('Check your email for the confirmation link, then return to VYBE and sign in.', true);
+  } else if (result.data.session) {
+   await activateUser(result.data.session.user);
    closeAuth();
   }
- }catch(err){
-  const message=err?.message||'Authentication failed.';
-  authFeedback(message==='Load failed'?'Network request failed. Check your Supabase project is running, your internet connection, and that the project URL is correct.':message);
- }finally{
-  authBusy=false;
-  $('authSubmit').disabled=false;
+ } catch (err) {
+  authFeedback(err.message || 'Sign-in failed. Please try again.');
+ } finally {
+  authBusy = false;
+  $('authSubmit').disabled = false;
  }
 }
 
-async function activateUser(newUser){
- if(!db||!newUser)return;
- if(user&&user.id===newUser.id&&cloudReady)return;
- if(user&&user.id!==newUser.id)await deactivateUser();
+function activateUser(newUser) {
+ if (!db || !newUser) return Promise.resolve();
+ if (user?.id === newUser.id) {
+  if (cloudReady) return Promise.resolve();
+  if (activation) return activation;
+ }
+ if (!user) guestSnapshot = snapshot();
+ user = newUser;
+ cloudReady = false;
+ $('accountButton').textContent = '👤 My Account';
+ $('libraryStatus').textContent = 'Loading your cloud library...';
+ const owner = newUser.id;
+ const loading = loadCloudLibrary(owner);
+ activation = loading;
+ return loading.finally(() => {
+  if (activation === loading) activation = null;
+ });
+}
 
- guestSnapshot=snapshot();
- user=newUser;
- cloudReady=false;
- $('accountButton').textContent='👤 My Account';
- $('libraryStatus').textContent='Loading your cloud library...';
-
- try{
-  const {data,error}=await db.from('user_libraries')
-   .select('likes,playlists,recent')
-   .eq('user_id',newUser.id)
-   .maybeSingle();
-
-  if(error)throw error;
-  if(!user||user.id!==newUser.id)return;
-
-  if(data){
-   applyLibrary(data);
-   cloudReady=true;
-   $('libraryStatus').textContent='☁ Your cloud library';
-  }else{
-   const local=guestSnapshot;
-   const hasLocal=local.likes.length||
-    local.playlists.length||local.recent.length;
-
-   let chosen={likes:[],playlists:[],recent:[]};
-   if(hasLocal&&confirm(
-    'Import your existing playlists, likes and recent songs into this account?'
-   )){
-    chosen=local;
-   }
-
-   const {error:writeError}=await db.from('user_libraries')
-    .insert({
-     user_id:newUser.id,
-     likes:chosen.likes,
-     playlists:chosen.playlists,
-     recent:chosen.recent
-    });
-
-   if(writeError)throw writeError;
-   applyLibrary(chosen);
-   cloudReady=true;
-   $('libraryStatus').textContent='☁ Your cloud library';
+async function loadCloudLibrary(owner) {
+ try {
+  const {data, error} = await db.from('user_libraries')
+   .select('likes,playlists,recent').eq('user_id', owner).maybeSingle();
+  if (error) throw error;
+  if (user?.id !== owner) return;
+  let library = data;
+  if (!library) {
+   const local = guestSnapshot || {likes:[], playlists:[], recent:[]};
+   const hasLocal = local.likes.length || local.playlists.length || local.recent.length;
+   const importLocal = hasLocal && confirm('Import your device playlists, likes and recent songs into this account?');
+   library = importLocal ? local : {likes:[], playlists:[], recent:[]};
+   const {error:writeError} = await db.from('user_libraries')
+    .insert({user_id:owner, ...library});
+   if (writeError) throw writeError;
   }
- }catch(err){
-  console.error(err);
-  $('libraryStatus').textContent='⚠ Cloud loading failed';
-  alert('Could not load your cloud library: '+err.message);
+  if (user?.id !== owner) return;
+  applyLibrary(library);
+  cloudReady = true;
+  $('libraryStatus').textContent = '☁ Your cloud library';
+ } catch (err) {
+  if (user?.id !== owner) return;
+  $('libraryStatus').textContent = '⚠ Cloud loading failed. Open My Account to retry.';
+  console.error('Library load:', err);
  }
 }
 
-async function deactivateUser(){
+function deactivateUser() {
  clearTimeout(cloudTimer);
- if(cloudSaving){
-  await new Promise(resolve=>{
-   const check=()=>{
-    if(!cloudSaving)resolve();
-    else setTimeout(check,100);
-   };
-   check();
-  });
- }
- user=null;
- cloudReady=false;
- cloudRevision=0;
- if(guestSnapshot){
+ activation = null;
+ user = null;
+ cloudReady = false;
+ cloudRevision = 0;
+ if (guestSnapshot) {
   applyLibrary(guestSnapshot);
-  guestSnapshot=null;
+  guestSnapshot = null;
  }
- $('accountButton').textContent='👤 Account';
- $('libraryStatus').textContent='Your library is saved on this device.';
+ $('accountButton').textContent = '👤 Account';
+ $('libraryStatus').textContent = 'Your library is saved on this device.';
 }
 
-function openAccount(){
- if(!user){
-  openAuth('signin');
-  return;
- }
- openModal(`<h2>👤 My VYBE Account</h2>
- <div class="accountpanel">
- <p><b>Signed in as</b><br>${esc(user.email||'VYBE User')}</p>
- <p class="muted">Your music library is linked to your account.</p>
- <button class="primary" onclick="retryCloudSave()">
- ☁ Sync Library</button>
- <p><button class="pill" onclick="signOut()">Log Out</button></p>
+function openAccount() {
+ if (!user) return openAuth('signin');
+ openModal(`<h2>👤 My VYBE Account</h2><div class="accountpanel">
+  <p><b>Signed in as</b><br>${esc(user.email || 'VYBE User')}</p>
+  <p class="muted">Your music library is linked to your account.</p>
+  <button class="primary" onclick="retryCloudSave()">☁ Sync Library</button>
+  <p><button class="pill" onclick="signOut()">Log Out</button></p>
  </div>`);
 }
 
-async function retryCloudSave(){
- if(!cloudReady)return alert('Cloud library is not ready.');
- cloudRevision++;
- await flushCloud();
+async function retryCloudSave() {
+ if (!user) return;
+ if (!cloudReady) {
+  await activateUser(user);
+ } else {
+  cloudRevision++;
+  await flushCloud();
+ }
  alert($('libraryStatus').textContent);
 }
 
-async function signOut(){
- if(!db)return;
- if(!confirm('Log out of your VYBE account?'))return;
- if(cloudReady){
-  cloudRevision++;
-  await flushCloud();
-  if($('libraryStatus').textContent.includes('failed')){
-   alert('Cloud sync failed. Please retry before logging out.');
-   return;
+async function signOut() {
+ if (!db || !confirm('Log out of your VYBE account?')) return;
+ try {
+  if (cloudReady) {
+   clearTimeout(cloudTimer);
+   cloudRevision++;
+   if (!await flushCloud()) {
+    alert('Cloud sync failed. Please retry before logging out.');
+    return;
+   }
   }
+  const {error} = await db.auth.signOut();
+  if (error) throw error;
+  deactivateUser();
+  closeModal();
+ } catch (err) {
+  alert(err.message || 'Could not sign out.');
  }
- const {error}=await db.auth.signOut();
- if(error)return alert(error.message);
- await deactivateUser();
- closeModal();
 }
 
-async function initAuth(){
- $('libraryStatus').textContent='Connecting to VYBE cloud...';
- if(!await connectSupabase()){
-  $('libraryStatus').textContent='Local library mode. '+connectionIssue;
+async function initAuth() {
+ $('libraryStatus').textContent = 'Connecting to VYBE cloud...';
+ if (!await connectSupabase()) {
+  $('libraryStatus').textContent = 'Device library ready. Reload to reconnect to your account.';
   return;
  }
- try{
-  const {data,error}=await db.auth.getUser();
-  if(error){
-   console.warn('Supabase session:',error.message);
-   $('libraryStatus').textContent='Local library ready. Sign in to sync.';
-  }else if(data?.user){
-   await activateUser(data.user);
-  }else{
-   $('libraryStatus').textContent='Local library ready. Sign in to sync.';
-  }
-  db.auth.onAuthStateChange((event,session)=>{
-   if(event==='SIGNED_OUT')setTimeout(()=>deactivateUser(),0);
-   if(event==='SIGNED_IN'&&session?.user)
-    setTimeout(()=>activateUser(session.user),0);
+ try {
+  db.auth.onAuthStateChange((event, session) => {
+   if (event === 'SIGNED_OUT') setTimeout(deactivateUser, 0);
+   if (event === 'SIGNED_IN' && session?.user) {
+    setTimeout(() => activateUser(session.user), 0);
+   }
   });
- }catch(err){
-  console.error('VYBE startup connection error:',err);
-  $('libraryStatus').textContent='Local library ready. Cloud connection failed; retry by reloading.';
+  const {data, error} = await db.auth.getUser();
+  if (data?.user && !error) {
+   await activateUser(data.user);
+  } else if (!user) {
+   $('libraryStatus').textContent = 'Device library ready. Sign in to sync.';
+  }
+ } catch (err) {
+  console.error(err);
+  $('libraryStatus').textContent = 'Device library ready. Reload to reconnect.';
  }
 }
 
